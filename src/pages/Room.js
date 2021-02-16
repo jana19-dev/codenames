@@ -22,12 +22,13 @@ export default function Room ({ slug }) {
   useEffect(() => {
     // find the room and check if the current user is joined
     room.on('value', (snapshot) => {
-      setRoomData(snapshot.val())
-      const currentUser = room.child('users').child(visitorID)
-      currentUser.on('value', (snapshot) => {
-        setIsCurrentUserJoined(snapshot.val())
-        setIsLoading(false)
-      }, setError)
+      const roomData = snapshot.val()
+      setRoomData(roomData)
+      if (roomData) {
+        const currentUser = roomData.users && roomData.users[visitorID]
+        setIsCurrentUserJoined(currentUser)
+      }
+      setIsLoading(false)
     }, setError)
   }, [])
 
@@ -39,5 +40,5 @@ export default function Room ({ slug }) {
 
   if (!isCurrentUserJoined) return <JoinRoom slug={slug} />
 
-  return <GameRoom slug={slug} />
+  return <GameRoom slug={slug} room={room} roomData={roomData} />
 }

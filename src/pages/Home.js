@@ -33,14 +33,9 @@ export default function Home () {
     const slug = generateSlug()
     const visitorID = window.localStorage.getItem('visitorID')
 
-    const data = {
-      slug,
-      owner: visitorID
-    }
-
     const room = firebase.ref(slug)
 
-    room.set(data)
+    room.set({ slug, owner: visitorID })
 
     const user = room.child('users').child(visitorID)
     user.set({ visitorID, nickname })

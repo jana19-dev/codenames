@@ -2,6 +2,7 @@ import {
   Text,
   Modal,
   Image,
+  Button,
   VStack,
   ModalBody,
   ModalHeader,
@@ -18,9 +19,12 @@ export default function RoomNotFound ({ slug }) {
       <ModalContent pb={4}>
         <ModalHeader fontSize='2xl' textAlign='center'>Room Not Found</ModalHeader>
         <ModalBody>
-          <VStack spacing={4}>
-            <Image maxW='200px' ignoreFallback src={roomNotFoundSVG} alt='Room Not Found' />
+          <VStack spacing={8}>
+            <Image maxW='200px' height='150px' ignoreFallback src={roomNotFoundSVG} alt='Room Not Found' />
             <Text fontWeight='bold'>{slug}</Text>
+            <Button colorScheme='yellow' onClick={() => {window.location.href = '/' }}>
+              Go Home
+            </Button>
           </VStack>
         </ModalBody>
       </ModalContent>

@@ -31,9 +31,6 @@ export default function JoinRoom ({ slug }) {
 
     const user = room.child('users').child(visitorID)
     user.set({ visitorID, nickname })
-      .then(() => {
-        window.location.reload()
-      })
   }
 
   return (
