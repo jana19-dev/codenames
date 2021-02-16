@@ -1,25 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect } from 'react'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import { useRoutes } from 'hookrouter'
+
+import FingerprintJS from '@fingerprintjs/fingerprintjs'
+
+import Home from 'pages/Home'
+import Room from 'pages/Room'
+
+import {
+  Box
+} from '@chakra-ui/react'
+
+const routes = {
+  '/room/:slug': ({ slug }) => <Room slug={slug} />
 }
 
-export default App;
+function App () {
+  const routeResult = useRoutes(routes)
+
+  useEffect(() => {
+    // get the unique visitor identifier
+    const loadVisitorID = async () => {
+      const fp = await FingerprintJS.load()
+      const result = await fp.get()
+      window.localStorage.setItem('visitorID', result.visitorId)
+    }
+    if (!window.localStorage.getItem('visitorID')) {
+      loadVisitorID()
+    }
+  }, [])
+
+  return (
+    <Box height='100vh' bgGradient='radial(orange.400, red.600)'>
+      {routeResult || <Home />}
+    </Box>
+  )
+}
+
+export default App
