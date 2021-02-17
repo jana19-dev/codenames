@@ -23,10 +23,10 @@ import { ImExit } from 'react-icons/im'
 
 import EditNickname from 'components/game/EditNickname'
 
-export default function Settings ({ slug, room, roomData }) {
+export default function Settings ({ room, roomData }) {
   const visitorID = window.localStorage.getItem('visitorID')
 
-  const roomURL = `https://adsadasdsa/room/${slug}`
+  const roomURL = `https://adsadasdsa/rooms/${room.name}`
 
   const roomOwner = roomData.users[roomData.owner]
   const currentUser = roomData.users[visitorID]
@@ -56,6 +56,9 @@ export default function Settings ({ slug, room, roomData }) {
 
   const onResetGame = () => {
     onResetTeams()
+    room.child('state').set({
+      turn: 'generating_words'
+    })
     room.child('words').set(null)
       .then(() => onClose())
   }
@@ -91,7 +94,7 @@ export default function Settings ({ slug, room, roomData }) {
         <DrawerOverlay>
           <DrawerContent>
             <DrawerCloseButton size='lg' />
-            <DrawerHeader>{slug}</DrawerHeader>
+            <DrawerHeader>{room.name}</DrawerHeader>
             <DrawerBody>
               <VStack spacing={8}>
                 <FormControl textAlign='center'>

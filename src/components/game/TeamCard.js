@@ -21,7 +21,14 @@ const JoinTeam = ({ room, team, role }) => {
   }
 
   return (
-    <Button colorScheme='yellow' size='sm' borderRadius='xl' my={2} onClick={onJoin}>
+    <Button
+      colorScheme='yellow'
+      size='sm'
+      borderRadius='xl'
+      my={2}
+      onClick={onJoin}
+      whiteSpace='normal'
+    >
       Join as {startCase(role)}
     </Button>
   )
@@ -43,7 +50,6 @@ export default function TeamCard (props) {
   return (
     <VStack
       direction='column'
-      // justifyContent='space-between'
       alignItems={['center', 'left']}
       p={[1, 4]}
       maxW={['100px', '100%']}

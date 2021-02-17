@@ -7,9 +7,10 @@ export default function BlueTeam ({ room, roomData }) {
 
   const currentUser = roomData.users[visitorID]
 
-  const remainingBlueCount = roomData.words.filter(({ agent, guessed }) => agent === 'blue' && !guessed).length
+  const remainingBlueCount = roomData.words && Object.values(roomData.words).filter(({ agent, guessed }) => agent === 'blue' && !guessed).length
 
   const blueOperatives = Object.values(roomData.users).filter(user => user.team === 'blue' && user.role === 'operative')
+
   const blueSpymasters = Object.values(roomData.users).filter(user => user.team === 'blue' && user.role === 'spymaster')
 
   const isCurrentUserJoined = currentUser.team && currentUser.role

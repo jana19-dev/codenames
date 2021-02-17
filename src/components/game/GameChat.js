@@ -74,7 +74,6 @@ export default function GameChat ({ room, roomData }) {
         <InputRightElement width='4rem' mr={1}>
           <Button
             size='sm'
-            onClick={onSendMessage}
             colorScheme='yellow'
             type='submit'
             isDisabled={!message}

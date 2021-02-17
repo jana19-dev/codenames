@@ -2,6 +2,7 @@ import {
   Box,
   Text,
   Grid,
+  Link,
   Image,
   VStack,
   HStack,
@@ -12,27 +13,19 @@ import logoSVG from 'images/logo.svg'
 
 import Settings from 'components/game/Settings'
 
-import StatusText from 'components/game/StatusText'
 import RedTeam from 'components/game/teams/RedTeam'
 import BlueTeam from 'components/game/teams/BlueTeam'
 import Board from 'components/game/Board'
 import GameLog from 'components/game/GameLog'
 import GameChat from 'components/game/GameChat'
 
-import GenerateWords from 'components/game/GenerateWords'
-import Waiting from 'components/game/Waiting'
-
-export default function GameRoom ({ slug, room, roomData }) {
+export default function GameRoom ({ room, roomData }) {
   const isDesktop = useBreakpointValue({ xl: true })
 
-  const visitorID = window.localStorage.getItem('visitorID')
-
-  const roomOwnerVisitorID = roomData.owner
-
   return (
-    <Box height='100%' p={[2, 4]}>
+    <Box height='100%' p={[2, 4]} pb={4}>
       <HStack height='45px' justifyContent='space-between' mb={2}>
-        <HStack alignItems='flex-end'>
+        <Link d='flex' alignItems='flex-end' href='/'>
           <Text
             fontWeight='bold'
             letterSpacing='3px'
@@ -42,15 +35,14 @@ export default function GameRoom ({ slug, room, roomData }) {
             CODENAMES
           </Text>
           <Image ignoreFallback height='45px' src={logoSVG} alt='CODENAMES' />
-        </HStack>
-        <Settings slug={slug} room={room} roomData={roomData} />
+        </Link>
+        <Settings room={room} roomData={roomData} />
       </HStack>
-      <StatusText room={room} roomData={roomData} />
-      {roomData.words && isDesktop && (
+      {isDesktop && (
         <Grid
           gap={4}
           templateColumns='0.8fr 3fr 1fr'
-          height='calc(100% - 150px)'
+          height='calc(100% - 45px)'
           overflow='auto'
         >
           <VStack spacing={8}>
@@ -64,10 +56,10 @@ export default function GameRoom ({ slug, room, roomData }) {
           </VStack>
         </Grid>
       )}
-      {roomData.words && !isDesktop && (
+      {!isDesktop && (
         <Grid
           gap={4}
-          height='calc(100% - 105px)'
+          height='calc(100% - 45px)'
           overflow='auto'
         >
           <Board room={room} roomData={roomData} />
@@ -80,12 +72,6 @@ export default function GameRoom ({ slug, room, roomData }) {
             <GameChat room={room} roomData={roomData} />
           </Grid>
         </Grid>
-      )}
-      {!roomData.words && roomOwnerVisitorID === visitorID && (
-        <GenerateWords room={room} />
-      )}
-      {!roomData.words && roomOwnerVisitorID !== visitorID && (
-        <Waiting />
       )}
     </Box>
   )

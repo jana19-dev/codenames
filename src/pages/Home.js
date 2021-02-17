@@ -6,6 +6,7 @@ import {
   Text,
   Modal,
   Input,
+  Image,
   VStack,
   Button,
   ModalBody,
@@ -13,6 +14,8 @@ import {
   ModalContent,
   ModalOverlay
 } from '@chakra-ui/react'
+
+import logoSVG from 'images/logo.svg'
 
 import firebase from 'utils/firebase'
 
@@ -30,17 +33,18 @@ export default function Home () {
   const onRoomCreate = (e) => {
     e.preventDefault()
     setIsLoading(true)
-    const slug = generateSlug()
+
+    const name = generateSlug()
     const visitorID = window.localStorage.getItem('visitorID')
 
-    const room = firebase.ref(slug)
+    const room = firebase.ref('rooms').child(name)
 
-    room.set({ slug, owner: visitorID, logs: [], state: { turn: 'red_spymaster' } })
+    room.set({ name, owner: visitorID, logs: [], state: { turn: 'generating_words' } })
 
     const user = room.child('users').child(visitorID)
     user.set({ visitorID, nickname })
       .then(() => {
-        window.location.href = `/room/${slug}`
+        window.location.href = `/rooms/${name}`
       })
   }
 
@@ -51,6 +55,7 @@ export default function Home () {
         <ModalHeader fontSize='2xl' textAlign='center'>Welcome to CODENAMES</ModalHeader>
         <ModalBody>
           <VStack spacing={8} as='form' onSubmit={onRoomCreate}>
+            <Image ignoreFallback height='65px' src={logoSVG} alt='CODENAMES' />
             <Text>To create a new room, choose a nickname</Text>
             <Input
               required

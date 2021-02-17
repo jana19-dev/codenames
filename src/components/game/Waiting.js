@@ -13,7 +13,7 @@ export default function Waiting () {
     <Modal isOpen isCentered size='xs'>
       <ModalOverlay />
       <ModalContent pb={4}>
-        <ModalHeader fontSize='2xl' textAlign='center'>
+        <ModalHeader fontSize='xl' textAlign='center'>
           Waiting for the room owner to start the game
         </ModalHeader>
         <ModalBody>

@@ -14,7 +14,7 @@ import {
 import './App.css'
 
 const routes = {
-  '/room/:slug': ({ slug }) => <Room slug={slug} />
+  '/rooms/:name': ({ name }) => <Room name={name} />
 }
 
 function App () {

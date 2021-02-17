@@ -1,67 +1,71 @@
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
+
+import firebase from 'utils/firebase'
 
 import {
-  Modal,
+  Text,
   VStack,
-  ModalBody,
-  ModalHeader,
-  ModalContent,
-  ModalOverlay,
   CircularProgress
 } from '@chakra-ui/react'
 
 import { shuffle } from 'lodash'
 
-import randomPictionaryWords from 'word-pictionary-list'
+import Error from 'components/Error'
 
 export default function GenerateWords ({ room }) {
+  const [error, setError] = useState(false)
+
   const generateWords = () => {
-    const randomWords = randomPictionaryWords({ exactly: 25, formatter: (word) => word.toUpperCase() })
-    const doubleAgent = {
-      label: randomWords[0],
-      agent: 'double',
-      guessed: false,
-      hintedBy: []
-    }
-    const blueAgents = randomWords.slice(1, 9).map(label => ({
-      label,
-      agent: 'blue',
-      guessed: false,
-      hintedBy: []
-    }))
-    const redAgents = randomWords.slice(9, 18).map(label => ({
-      label,
-      agent: 'red',
-      guessed: false,
-      hintedBy: []
-    }))
-    const bystanders = randomWords.slice(18, 25).map(label => ({
-      label,
-      agent: 'bystander',
-      guessed: false,
-      hintedBy: []
-    }))
-    const words = room.child('words')
-    words.set(shuffle([doubleAgent, ...blueAgents, ...redAgents, ...bystanders]))
+    firebase.ref('words').on('value', (snapshot) => {
+      const allWords = snapshot.val()
+      const randomWords = shuffle(allWords).slice(0, 25)
+      const doubleAgent = {
+        label: randomWords[0].toUpperCase(),
+        agent: 'double',
+        guessed: false,
+        hintedBy: []
+      }
+      const blueAgents = randomWords.slice(1, 9).map(label => ({
+        label: label.toUpperCase(),
+        agent: 'blue',
+        guessed: false,
+        hintedBy: []
+      }))
+      const redAgents = randomWords.slice(9, 18).map(label => ({
+        label: label.toUpperCase(),
+        agent: 'red',
+        guessed: false,
+        hintedBy: []
+      }))
+      const bystanders = randomWords.slice(18, 25).map(label => ({
+        label: label.toUpperCase(),
+        agent: 'bystander',
+        guessed: false,
+        hintedBy: []
+      }))
+      const words = {}
+      for (const word of shuffle([doubleAgent, ...blueAgents, ...redAgents, ...bystanders])) {
+        words[word.label] = word
+      }
+      room.child('words').set(words)
+        .then(() => {
+          room.child('state').set({
+            turn: 'red_spymaster'
+          })
+        })
+    }, setError)
   }
 
   useEffect(() => {
     generateWords()
   }, [])
 
+  if (error) return <Error error={error} />
+
   return (
-    <Modal isOpen isCentered size='xs'>
-      <ModalOverlay />
-      <ModalContent pb={4}>
-        <ModalHeader fontSize='2xl' textAlign='center'>
-          Generating Words
-        </ModalHeader>
-        <ModalBody>
-          <VStack>
-            <CircularProgress isIndeterminate color='teal.300' thickness='16px' />
-          </VStack>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+    <VStack justifyContent='center'>
+      <Text fontWeight='bold' fontSize='xl'>Generating Words</Text>
+      <CircularProgress isIndeterminate color='teal.300' thickness='16px' />
+    </VStack>
   )
 }

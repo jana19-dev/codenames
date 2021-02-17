@@ -8,8 +8,8 @@ import Error from 'components/Error'
 
 import firebase from 'utils/firebase'
 
-export default function Room ({ slug }) {
-  const room = firebase.ref(slug)
+export default function Room ({ name }) {
+  const room = firebase.ref('rooms').child(name)
 
   const visitorID = window.localStorage.getItem('visitorID')
 
@@ -36,9 +36,9 @@ export default function Room ({ slug }) {
 
   if (error) return <Error error={error} />
 
-  if (!roomData) return <RoomNotFound slug={slug} />
+  if (!roomData) return <RoomNotFound name={name} />
 
-  if (!isCurrentUserJoined) return <JoinRoom slug={slug} />
+  if (!isCurrentUserJoined) return <JoinRoom room={room} />
 
-  return <GameRoom slug={slug} room={room} roomData={roomData} />
+  return <GameRoom room={room} roomData={roomData} />
 }

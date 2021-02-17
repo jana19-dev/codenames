@@ -7,7 +7,7 @@ export default function RedTeam ({ room, roomData }) {
 
   const currentUser = roomData.users[visitorID]
 
-  const remainingRedCount = roomData.words.filter(({ agent, guessed }) => agent === 'red' && !guessed).length
+  const remainingRedCount = roomData.words && Object.values(roomData.words).filter(({ agent, guessed }) => agent === 'red' && !guessed).length
 
   const redOperatives = Object.values(roomData.users).filter(user => user.team === 'red' && user.role === 'operative')
   const redSpymasters = Object.values(roomData.users).filter(user => user.team === 'red' && user.role === 'spymaster')

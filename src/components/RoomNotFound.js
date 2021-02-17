@@ -12,7 +12,7 @@ import {
 
 import roomNotFoundSVG from 'images/roomNotFound.svg'
 
-export default function RoomNotFound ({ slug }) {
+export default function RoomNotFound ({ name }) {
   return (
     <Modal isOpen isCentered size='xs'>
       <ModalOverlay />
@@ -21,7 +21,7 @@ export default function RoomNotFound ({ slug }) {
         <ModalBody>
           <VStack spacing={8}>
             <Image maxW='200px' height='150px' ignoreFallback src={roomNotFoundSVG} alt='Room Not Found' />
-            <Text fontWeight='bold'>{slug}</Text>
+            <Text fontWeight='bold'>{name}</Text>
             <Button colorScheme='yellow' onClick={() => {window.location.href = '/' }}>
               Go Home
             </Button>
