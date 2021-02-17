@@ -68,6 +68,7 @@ export default function Board ({ room, roomData }) {
         templateColumns='1fr 1fr 1fr 1fr 1fr'
         gap={[1, 2]}
         height='fit-content'
+        width='100%'
       >
         {Object.values(roomData.words).map((word, idx) => (
           <Card
