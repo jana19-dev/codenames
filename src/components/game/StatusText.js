@@ -4,6 +4,24 @@ import {
 } from '@chakra-ui/react'
 
 export default function StatusText ({ room, roomData }) {
+  const visitorID = window.localStorage.getItem('visitorID')
+  const currentUser = roomData.users[visitorID]
+
+  let text = ''
+  if (roomData.state.turn.includes('spymaster')) {
+    if (roomData.state.turn.includes(currentUser.role) && roomData.state.turn.includes(currentUser.team)) {
+      text = 'Give your operatives a clue'
+    } else {
+      text = 'Waiting for opponent spymaster to give a clue'
+    }
+  } else if (roomData.state.turn.includes('operative')) {
+    if (roomData.state.turn.includes(currentUser.role) && roomData.state.turn.includes(currentUser.team)) {
+      text = 'Give your operatives a clue'
+    } else {
+      text = 'Waiting for opponent spymaster to give a clue'
+    }
+  }
+
   return (
     <Flex
       height={['40px', '55px']}
@@ -18,7 +36,7 @@ export default function StatusText ({ room, roomData }) {
       alignItems='center'
     >
       <Text fontWeight='bold' fontSize={['sm', '2xl']} letterSpacing={['0.5px', '1px']} height='100%'>
-        Waiting for your spymaster to give you a clue...
+        {text}
       </Text>
     </Flex>
   )

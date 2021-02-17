@@ -11,6 +11,8 @@ import {
   Box
 } from '@chakra-ui/react'
 
+import './App.css'
+
 const routes = {
   '/room/:slug': ({ slug }) => <Room slug={slug} />
 }

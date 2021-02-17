@@ -21,25 +21,25 @@ export default function GenerateWords ({ room }) {
       label: randomWords[0],
       agent: 'double',
       guessed: false,
-      guessedBy: ''
+      hintedBy: []
     }
     const blueAgents = randomWords.slice(1, 9).map(label => ({
       label,
       agent: 'blue',
       guessed: false,
-      guessedBy: ''
+      hintedBy: []
     }))
     const redAgents = randomWords.slice(9, 18).map(label => ({
       label,
       agent: 'red',
       guessed: false,
-      guessedBy: ''
+      hintedBy: []
     }))
     const bystanders = randomWords.slice(18, 25).map(label => ({
       label,
       agent: 'bystander',
       guessed: false,
-      guessedBy: ''
+      hintedBy: []
     }))
     const words = room.child('words')
     words.set(shuffle([doubleAgent, ...blueAgents, ...redAgents, ...bystanders]))

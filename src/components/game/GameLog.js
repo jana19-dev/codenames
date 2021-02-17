@@ -18,7 +18,7 @@ export default function GameLog ({ room, roomData }) {
   return (
     <VStack
       width='100%'
-      height={['350px', '380px']}
+      height={['280px', '380px']}
       maxW={['100%', '450px']}
       bgGradient='radial(rgba(0, 0, 0, 0.40), rgba(0, 0, 0, 0.75))'
       color='white'
@@ -36,8 +36,9 @@ export default function GameLog ({ room, roomData }) {
               <Text
                 key={idx}
                 width='100%'
+                fontSize={['xs', 'sm']}
                 px={2}
-                py={2}
+                py={[0, 2]}
                 borderRadius='lg'
                 bgGradient='radial(rgba(0, 0, 0, 0.40), rgba(0, 0, 0, 0.75))'
               >

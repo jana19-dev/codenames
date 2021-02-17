@@ -35,7 +35,7 @@ export default function Home () {
 
     const room = firebase.ref(slug)
 
-    room.set({ slug, owner: visitorID, logs: [] })
+    room.set({ slug, owner: visitorID, logs: [], state: { turn: 'red_spymaster' } })
 
     const user = room.child('users').child(visitorID)
     user.set({ visitorID, nickname })
@@ -48,7 +48,7 @@ export default function Home () {
     <Modal initialFocusRef={nicknameRef} isOpen isCentered>
       <ModalOverlay />
       <ModalContent pb={4}>
-        <ModalHeader fontSize='2xl' textAlign='center'>Welcome to Code Names</ModalHeader>
+        <ModalHeader fontSize='2xl' textAlign='center'>Welcome to CODENAMES</ModalHeader>
         <ModalBody>
           <VStack spacing={8} as='form' onSubmit={onRoomCreate}>
             <Text>To create a new room, choose a nickname</Text>

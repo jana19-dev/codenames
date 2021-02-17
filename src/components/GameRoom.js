@@ -13,7 +13,8 @@ import logoSVG from 'images/logo.svg'
 import Settings from 'components/game/Settings'
 
 import StatusText from 'components/game/StatusText'
-import Teams from 'components/game/Teams'
+import RedTeam from 'components/game/teams/RedTeam'
+import BlueTeam from 'components/game/teams/BlueTeam'
 import Board from 'components/game/Board'
 import GameLog from 'components/game/GameLog'
 import GameChat from 'components/game/GameChat'
@@ -22,7 +23,7 @@ import GenerateWords from 'components/game/GenerateWords'
 import Waiting from 'components/game/Waiting'
 
 export default function GameRoom ({ slug, room, roomData }) {
-  const isDesktop = useBreakpointValue({ lg: true })
+  const isDesktop = useBreakpointValue({ xl: true })
 
   const visitorID = window.localStorage.getItem('visitorID')
 
@@ -52,7 +53,10 @@ export default function GameRoom ({ slug, room, roomData }) {
           height='calc(100% - 150px)'
           overflow='auto'
         >
-          <Teams room={room} roomData={roomData} />
+          <VStack spacing={8}>
+            <RedTeam room={room} roomData={roomData} />
+            <BlueTeam room={room} roomData={roomData} />
+          </VStack>
           <Board room={room} roomData={roomData} />
           <VStack spacing={8}>
             <GameLog room={room} roomData={roomData} />
@@ -63,13 +67,18 @@ export default function GameRoom ({ slug, room, roomData }) {
       {roomData.words && !isDesktop && (
         <Grid
           gap={4}
-          height='calc(100% - 100px)'
+          height='calc(100% - 105px)'
           overflow='auto'
         >
           <Board room={room} roomData={roomData} />
-          <GameLog room={room} roomData={roomData} />
-          <GameChat room={room} roomData={roomData} />
-          <Teams room={room} roomData={roomData} direction='row' />
+          <Grid templateColumns='0.5fr 1fr 0.5fr' justifyItems='center'>
+            <RedTeam room={room} roomData={roomData} />
+            <GameLog room={room} roomData={roomData} />
+            <BlueTeam room={room} roomData={roomData} />
+          </Grid>
+          <Grid justifyItems='center'>
+            <GameChat room={room} roomData={roomData} />
+          </Grid>
         </Grid>
       )}
       {!roomData.words && roomOwnerVisitorID === visitorID && (
