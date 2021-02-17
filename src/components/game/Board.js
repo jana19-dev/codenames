@@ -8,7 +8,7 @@ export default function Board ({ room, roomData }) {
   return (
     <Grid
       templateColumns='1fr 1fr 1fr 1fr 1fr'
-      gap={2}
+      gap={[0, 2]}
       height='fit-content'
     >
       {roomData.words.map((word, idx) => <Card key={idx} word={word} />)}

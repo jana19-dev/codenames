@@ -57,7 +57,7 @@ export default function Settings ({ slug, room, roomData }) {
   const onResetGame = () => {
     onResetTeams()
     room.child('words').set(null)
-    onClose()
+      .then(() => onClose())
   }
 
   const onLeaveRoom = () => {

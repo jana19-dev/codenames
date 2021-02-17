@@ -35,7 +35,7 @@ export default function Home () {
 
     const room = firebase.ref(slug)
 
-    room.set({ slug, owner: visitorID })
+    room.set({ slug, owner: visitorID, logs: [] })
 
     const user = room.child('users').child(visitorID)
     user.set({ visitorID, nickname })

@@ -5,6 +5,7 @@ import {
   Wrap,
   Grid,
   Image,
+  Stack,
   VStack,
   Button,
   FormLabel,
@@ -42,8 +43,10 @@ const TeamCard = (props) => {
 
   return (
     <VStack
+      direction='column' justifyContent='space-between'
       alignItems='left'
       p={4}
+      mb={4}
       width='100%'
       bgColor={team === 'red' ? 'red.700' : 'blue.700'}
       color='white'
@@ -51,7 +54,14 @@ const TeamCard = (props) => {
       borderRadius='xl'
     >
       <Grid templateColumns='2fr 1fr' alignItems='center' gap={4}>
-        <Image maxW='200px' height='100px' ignoreFallback src={image} alt='Agent' borderRadius='3xl' />
+        <Image
+          maxW={['100px', '200px']}
+          height={['50px', '100px']}
+          ignoreFallback
+          src={image}
+          alt='Agent'
+          borderRadius='3xl'
+        />
         <Text fontSize='48px' textAlign='center'>{count}</Text>
       </Grid>
       <FormControl mb={4}>
@@ -74,7 +84,7 @@ const TeamCard = (props) => {
   )
 }
 
-export default function Teams ({ room, roomData }) {
+export default function Teams ({ room, roomData, direction = 'column' }) {
   const visitorID = window.localStorage.getItem('visitorID')
 
   const currentUser = roomData.users[visitorID]
@@ -91,7 +101,7 @@ export default function Teams ({ room, roomData }) {
   const isCurrentUserJoined = currentUser.team && currentUser.role
 
   return (
-    <VStack>
+    <Stack spacing={[4, 4]} direction={direction}>
       <TeamCard
         room={room}
         team='red'
@@ -110,6 +120,6 @@ export default function Teams ({ room, roomData }) {
         spymasters={blueSpymasters}
         isCurrentUserJoined={isCurrentUserJoined}
       />
-    </VStack>
+    </Stack>
   )
 }

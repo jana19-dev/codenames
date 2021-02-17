@@ -3,7 +3,7 @@ import {
   Text
 } from '@chakra-ui/react'
 
-export default function StatusText ({ roomData }) {
+export default function StatusText ({ room, roomData }) {
   return (
     <Flex
       height={['40px', '55px']}
@@ -17,8 +17,8 @@ export default function StatusText ({ roomData }) {
       color='white'
       alignItems='center'
     >
-      <Text fontWeight='bold' fontSize={['md', '2xl']} letterSpacing={['0.5px', '1px']} height='100%'>
-        Wait for your spymaster to give you a clue...
+      <Text fontWeight='bold' fontSize={['sm', '2xl']} letterSpacing={['0.5px', '1px']} height='100%'>
+        Waiting for your spymaster to give you a clue...
       </Text>
     </Flex>
   )
