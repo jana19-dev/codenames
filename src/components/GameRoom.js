@@ -46,7 +46,7 @@ export default function GameRoom ({ room, roomData }) {
           height='calc(100% - 45px)'
           overflow='auto'
         >
-          <VStack spacing={8} width='100%'>
+          <VStack spacing={8} justifyContent='space-around' maxH='775px'>
             <RedTeam room={room} roomData={roomData} />
             <BlueTeam room={room} roomData={roomData} />
           </VStack>

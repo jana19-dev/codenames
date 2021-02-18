@@ -8,6 +8,7 @@ import {
   Popover,
   InputGroup,
   PopoverBody,
+  useDisclosure,
   PopoverContent,
   PopoverTrigger,
   InputLeftElement,
@@ -15,6 +16,8 @@ import {
 } from '@chakra-ui/react'
 
 export default function ClueInput ({ room, roomData }) {
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
   const visitorID = window.localStorage.getItem('visitorID')
   const currentUser = roomData.users[visitorID]
 
@@ -43,13 +46,14 @@ export default function ClueInput ({ room, roomData }) {
       borderRadius='xl'
     >
       <InputLeftElement width='3rem' mr={1}>
-        <Popover placement='top'>
+        <Popover placement='top' isOpen={isOpen} onClose={onClose}>
           <PopoverTrigger>
             <Button
               size='sm'
               colorScheme='yellow'
               fontSize='22px'
               fontWeight='bold'
+              onClick={onOpen}
             >
               {count}
             </Button>
@@ -67,7 +71,7 @@ export default function ClueInput ({ room, roomData }) {
                       key={idx + 1}
                       colorScheme={count === idx + 1 ? 'yellow' : 'gray'}
                       size='md'
-                      onClick={() => setCount(idx + 1)}
+                      onClick={() => { setCount(idx + 1); onClose() }}
                     >
                       {idx + 1}
                     </Button>
@@ -85,7 +89,7 @@ export default function ClueInput ({ room, roomData }) {
         justifySelf='flex-end'
         placeholder='Type your clue here'
         value={clue}
-        onChange={e => setClue(e.target.value.trim().toUpperCase())}
+        onChange={e => setClue(e.target.value.trim().toUpperCase().slice(0, 20))}
       />
       <InputRightElement width='6rem' mr={1}>
         <Button

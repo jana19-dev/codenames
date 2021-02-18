@@ -44,7 +44,7 @@ export default function GameChat ({ room, roomData }) {
         <VStack
           spacing={1}
           width='100%'
-          height={['350px', '380px']}
+          height={['300px', '330px']}
           overflow='auto'
         >
           {Object.values(roomData.chat).map((chat, idx) => {
@@ -69,7 +69,8 @@ export default function GameChat ({ room, roomData }) {
         <Input
           justifySelf='flex-end'
           value={message}
-          onChange={e => setMessage(e.target.value)}
+          onChange={e => setMessage(e.target.value.slice(0, 40))}
+          border='none'
         />
         <InputRightElement width='4rem' mr={1}>
           <Button
