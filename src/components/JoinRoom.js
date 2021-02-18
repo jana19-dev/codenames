@@ -50,6 +50,7 @@ export default function JoinRoom ({ room }) {
               type='submit'
               colorScheme='yellow'
               isLoading={isLoading}
+              size='lg'
             >
               Join Room
             </Button>

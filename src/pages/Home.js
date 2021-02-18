@@ -68,6 +68,7 @@ export default function Home () {
             <Button
               type='submit'
               colorScheme='yellow'
+              size='lg'
               isLoading={isLoading}
             >
               Create Room
