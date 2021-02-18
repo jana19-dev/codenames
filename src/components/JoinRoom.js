@@ -48,7 +48,7 @@ export default function JoinRoom ({ room }) {
             />
             <Button
               type='submit'
-              colorScheme='teal'
+              colorScheme='yellow'
               isLoading={isLoading}
             >
               Join Room

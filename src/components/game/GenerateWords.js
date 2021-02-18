@@ -65,7 +65,7 @@ export default function GenerateWords ({ room }) {
   return (
     <VStack justifyContent='center'>
       <Text fontWeight='bold' fontSize='xl'>Generating Words</Text>
-      <CircularProgress isIndeterminate color='teal.300' thickness='16px' />
+      <CircularProgress isIndeterminate color='yellow.300' thickness='16px' />
     </VStack>
   )
 }

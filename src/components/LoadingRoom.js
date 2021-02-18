@@ -16,7 +16,7 @@ export default function LoadingRoom () {
         <ModalHeader fontSize='2xl' textAlign='center'>Loading Room</ModalHeader>
         <ModalBody>
           <VStack>
-            <CircularProgress isIndeterminate color='teal.300' thickness='16px' />
+            <CircularProgress isIndeterminate color='yellow.300' thickness='16px' />
           </VStack>
         </ModalBody>
       </ModalContent>

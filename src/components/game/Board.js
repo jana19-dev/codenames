@@ -82,7 +82,7 @@ export default function Board ({ room, roomData }) {
   if (roomData.state.turn === 'generating_words' && roomOwnerVisitorID !== visitorID) {
     return (
       <VStack justifyContent='center'>
-        <CircularProgress isIndeterminate color='teal.300' thickness='18px' size='48px' />
+        <CircularProgress isIndeterminate color='yellow.300' thickness='18px' size='48px' />
       </VStack>
     )
   }

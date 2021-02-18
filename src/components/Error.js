@@ -23,7 +23,7 @@ export default function Error ({ error }) {
           </Text>
         </ModalBody>
         <ModalFooter d='flex' flexDir='column' alignItems='center'>
-          <Button colorScheme='teal' onClick={() => { window.location.href = '/' }}>
+          <Button colorScheme='yellow' onClick={() => { window.location.href = '/' }}>
             Refresh
           </Button>
         </ModalFooter>
