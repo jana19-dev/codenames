@@ -32,12 +32,12 @@ export default function GameChat ({ room, roomData }) {
   return (
     <VStack
       justifyContent='space-between'
-      width='100%'
       height={['350px', '380px']}
-      maxW={['100%', '450px']}
+      maxW={['100%', '420px']}
       bgGradient='radial(rgba(0, 0, 0, 0.40), rgba(0, 0, 0, 0.75))'
       color='white'
       borderRadius='lg'
+      overflowX='hidden'
     >
       <Text fontWeight='bold' mt={2}>Game Chat</Text>
       {roomData.chat && (

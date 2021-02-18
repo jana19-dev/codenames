@@ -12,6 +12,8 @@ export default function ClueText ({ clue, count }) {
       p={2}
       color='white'
       alignItems='center'
+      maxW={['350px', '500px']}
+      overflowX='auto'
     >
       <Text
         fontWeight='bold'

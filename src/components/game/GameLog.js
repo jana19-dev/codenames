@@ -13,16 +13,17 @@ export default function GameLog ({ room, roomData }) {
 
   useEffect(() => {
     isDesktop && logsEndRef.current.scrollIntoView({ behavior: 'smooth' })
-  }, [roomData])
+  }, [isDesktop, roomData])
 
   return (
     <VStack
       width='100%'
       height={['280px', '380px']}
-      maxW={['100%', '450px']}
+      maxW={['100%', '420px']}
       bgGradient='radial(rgba(0, 0, 0, 0.40), rgba(0, 0, 0, 0.75))'
       color='white'
       borderRadius='lg'
+      overflowX='hidden'
     >
       <Text fontWeight='bold' mt={2}>Game Log</Text>
       {roomData.logs && (

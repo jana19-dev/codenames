@@ -26,6 +26,7 @@ export default function GameRoom ({ room, roomData }) {
     <Box height='100%' p={[2, 4]} overflow='hidden'>
       <HStack height='65px' justifyContent='space-between' alignItems='center'>
         <Link d='flex' alignItems='flex-end' href='/'>
+          <Image ignoreFallback height='45px' src={logoSVG} alt='CODENAMES' />
           <Text
             fontWeight='bold'
             letterSpacing='3px'
@@ -34,12 +35,12 @@ export default function GameRoom ({ room, roomData }) {
           >
             CODENAMES
           </Text>
-          <Image ignoreFallback height='45px' src={logoSVG} alt='CODENAMES' />
         </Link>
         <Settings room={room} roomData={roomData} />
       </HStack>
       {isDesktop && (
         <Grid
+          pt={8}
           gap={4}
           templateColumns='0.8fr 3fr 1fr'
           height='calc(100% - 45px)'
