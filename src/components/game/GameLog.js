@@ -7,12 +7,12 @@ import {
 } from '@chakra-ui/react'
 
 export default function GameLog ({ room, roomData }) {
-  const isDesktop = useBreakpointValue({ lg: true })
+  const isDesktop = useBreakpointValue({ xl: true })
 
   const logsEndRef = useRef()
 
   useEffect(() => {
-    isDesktop && logsEndRef.current.scrollIntoView({ behavior: 'smooth' })
+    logsEndRef.current.scrollTop = logsEndRef.current.scrollHeight
   }, [isDesktop, roomData])
 
   return (
@@ -31,6 +31,7 @@ export default function GameLog ({ room, roomData }) {
           spacing={1}
           width='100%'
           overflow='auto'
+          ref={logsEndRef}
         >
           {Object.values(roomData.logs).map((log, idx) => {
             return (
@@ -48,7 +49,7 @@ export default function GameLog ({ room, roomData }) {
               </Text>
             )
           })}
-          <div ref={logsEndRef} />
+          {/* <div ref={logsEndRef} /> */}
         </VStack>
       )}
     </VStack>

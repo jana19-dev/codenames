@@ -1,10 +1,12 @@
+import { useEffect } from 'react'
+
 import {
   Flex,
   Text,
   Badge,
+  VStack,
   IconButton,
-  useBreakpointValue,
-  VStack
+  useBreakpointValue
 } from '@chakra-ui/react'
 
 import { FaHandPointUp } from 'react-icons/fa'
@@ -15,8 +17,22 @@ import bluePNG from 'images/blue.png'
 import doublePNG from 'images/double.png'
 import bystanderPNG from 'images/bystander.png'
 
+import { motion, useAnimation } from 'framer-motion'
+
+const MotionCard = motion.custom(Flex)
+
 export default function Card ({ word, room, roomData }) {
+  const cardControls = useAnimation()
+
   const isDesktop = useBreakpointValue({ md: true })
+
+  useEffect(() => {
+    if (word.guessed) {
+      cardControls.start({
+        rotateY: 360
+      })
+    }
+  }, [word.guessed])
 
   const visitorID = window.localStorage.getItem('visitorID')
   const currentUser = roomData.users[visitorID]
@@ -69,7 +85,10 @@ export default function Card ({ word, room, roomData }) {
     })
   }
 
-  const onGuess = () => {
+  const onGuess = async () => {
+    await cardControls.start({
+      rotateY: 360
+    })
     room.child('words').child(word.label).update({
       guessed: true
     })
@@ -125,7 +144,7 @@ export default function Card ({ word, room, roomData }) {
   }
 
   return (
-    <Flex
+    <MotionCard
       bgGradient={bgGradient}
       bgColor={bgColor}
       color={color}
@@ -135,6 +154,8 @@ export default function Card ({ word, room, roomData }) {
       height={['60px', '120px']}
       position='relative'
       letterSpacing='1px'
+      animate={cardControls}
+      transition={{ duration: 1 }}
       {...cardBackground}
     >
       {(!word.guessed || roomData.state.turn.includes('won')) && (
@@ -192,6 +213,6 @@ export default function Card ({ word, room, roomData }) {
           </VStack>
         </>
       )}
-    </Flex>
+    </MotionCard>
   )
 }

@@ -25,7 +25,7 @@ export default function GameChat ({ room, roomData }) {
     })
       .then(() => {
         setMessage('')
-        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+        messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight
       })
   }
 
@@ -46,6 +46,7 @@ export default function GameChat ({ room, roomData }) {
           width='100%'
           height={['300px', '330px']}
           overflow='auto'
+          ref={messagesEndRef}
         >
           {Object.values(roomData.chat).map((chat, idx) => {
             return (
@@ -58,11 +59,10 @@ export default function GameChat ({ room, roomData }) {
                 borderRadius='lg'
                 bgGradient='radial(rgba(0, 0, 0, 0.40), rgba(0, 0, 0, 0.75))'
               >
-                <strong>{chat.nickname}</strong>: {chat.message}
+                <strong>{chat.nickname}</strong> 👉 {chat.message}
               </Text>
             )
           })}
-          <div ref={messagesEndRef} />
         </VStack>
       )}
       <InputGroup size='lg' as='form' onSubmit={onSendMessage} height='50px'>
