@@ -64,6 +64,12 @@ export default function StatusText ({ room, roomData }) {
     } else {
       text = 'Waiting for RED operatives to guess words'
     }
+  } else if (roomData.state.turn.includes('won')) {
+    if (roomData.state.turn === 'red_won') {
+      text = 'Red team wins! 😎'
+    } else {
+      text = 'Blue team wins! 😎'
+    }
   } else {
     text = 'Room owner is setting up the game'
   }

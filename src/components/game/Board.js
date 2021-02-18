@@ -10,6 +10,8 @@ import GenerateWords from 'components/game/GenerateWords'
 
 import StatusText from 'components/game/StatusText'
 
+import StyledText from 'components/game/StyledText'
+
 import Card from 'components/game/Card'
 
 import ClueInput from 'components/game/ClueInput'
@@ -20,9 +22,33 @@ export default function Board ({ room, roomData }) {
   const roomOwnerVisitorID = roomData.owner
 
   const currentUser = roomData.users[visitorID]
+  const roomOwner = roomData.users[roomData.owner]
 
   const onEndGuess = () => {
-    console.log('END GUESS')
+    const currentTurn = roomData.state.turn
+    room.child('state').update({
+      clue: null,
+      count: null,
+      turn: currentTurn === 'red_operative' ? 'blue_spymaster' : 'red_spymaster'
+    })
+    const color = currentUser.team === 'blue' ? '🔵 ' : '🔴'
+    room.child('logs').push(`${color} ${currentUser.nickname} clicks end guessing`)
+  }
+
+  const onResetTeams = () => {
+    for (const visitorID of Object.keys(roomData.users)) {
+      const user = room.child('users').child(visitorID)
+      user.update({ team: null, role: null })
+    }
+  }
+
+  const onResetGame = () => {
+    onResetTeams()
+    room.child('state').set({
+      turn: 'generating_words'
+    })
+    room.child('words').set(null)
+    room.child('logs').push(`⚪ ${roomOwner.nickname} has reset the game`)
   }
 
   let showClueInput = false
@@ -79,7 +105,7 @@ export default function Board ({ room, roomData }) {
           />
         ))}
       </Grid>
-      {showClueInput && <ClueInput room={room} />}
+      {showClueInput && <ClueInput room={room} roomData={roomData} />}
       {!showClueInput && roomData.state.clue && (
         <HStack alignItems='center'>
           <ClueText clue={roomData.state.clue} count={roomData.state.count} />
@@ -93,6 +119,17 @@ export default function Board ({ room, roomData }) {
             </Button>
           )}
         </HStack>
+      )}
+      {roomData.state.turn.includes('won') && currentUser.visitorID === roomOwner.visitorID && (
+        <Button colorScheme='yellow' onClick={onResetGame}>
+          PLAY NEXT GAME
+        </Button>
+      )}
+      {roomData.state.turn.includes('won') && currentUser.visitorID !== roomOwner.visitorID && (
+        <StyledText value='Waiting for room owner to reset the game' />
+      )}
+      {(!currentUser.team || !currentUser.role) && (
+        <StyledText value='Join a team to play' />
       )}
     </VStack>
 

@@ -47,11 +47,19 @@ export default function Settings ({ room, roomData }) {
     user.update({ team: null, role: null })
   }
 
+  const onResetWords = () => {
+    room.child('state').set({
+      turn: 'generating_words'
+    })
+    room.child('logs').push(`⚪ ${roomOwner.nickname} has reset the words`)
+  }
+
   const onResetTeams = () => {
     for (const visitorID of Object.keys(roomData.users)) {
       const user = room.child('users').child(visitorID)
       user.update({ team: null, role: null })
     }
+    room.child('logs').push(`⚪ ${roomOwner.nickname} has reset the teams`)
   }
 
   const onResetGame = () => {
@@ -60,7 +68,7 @@ export default function Settings ({ room, roomData }) {
       turn: 'generating_words'
     })
     room.child('words').set(null)
-      .then(() => onClose())
+    room.child('logs').push(`⚪ ${roomOwner.nickname} has reset the game`)
   }
 
   const onLeaveRoom = () => {
@@ -166,11 +174,21 @@ export default function Settings ({ room, roomData }) {
                 </FormControl>
                 {roomOwner.visitorID === visitorID && (
                   <FormControl>
+                    <Button colorScheme='yellow' onClick={onResetWords}>
+                      Reset Words
+                    </Button>
+                    <FormHelperText color='red.500' fontWeight='bold'>
+                      The words will be reset for this game.
+                    </FormHelperText>
+                  </FormControl>
+                )}
+                {roomOwner.visitorID === visitorID && (
+                  <FormControl>
                     <Button colorScheme='yellow' onClick={onResetTeams}>
                       Reset Teams
                     </Button>
                     <FormHelperText color='red.500' fontWeight='bold'>
-                      The teams teams will be reset for this room.
+                      The teams will be reset for this room.
                     </FormHelperText>
                   </FormControl>
                 )}

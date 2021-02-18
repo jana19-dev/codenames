@@ -23,8 +23,8 @@ export default function GameRoom ({ room, roomData }) {
   const isDesktop = useBreakpointValue({ xl: true })
 
   return (
-    <Box height='100%' p={[2, 4]} pb={4}>
-      <HStack height='45px' justifyContent='space-between' mb={2}>
+    <Box height='100%' p={[2, 4]} overflow='hidden'>
+      <HStack height='65px' justifyContent='space-between' alignItems='center'>
         <Link d='flex' alignItems='flex-end' href='/'>
           <Text
             fontWeight='bold'
@@ -45,7 +45,7 @@ export default function GameRoom ({ room, roomData }) {
           height='calc(100% - 45px)'
           overflow='auto'
         >
-          <VStack spacing={8}>
+          <VStack spacing={8} width='100%'>
             <RedTeam room={room} roomData={roomData} />
             <BlueTeam room={room} roomData={roomData} />
           </VStack>
@@ -59,8 +59,9 @@ export default function GameRoom ({ room, roomData }) {
       {!isDesktop && (
         <Grid
           gap={4}
-          height='calc(100% - 45px)'
+          height='calc(100% - 65px)'
           overflow='auto'
+          overflowX='hidden'
         >
           <Board room={room} roomData={roomData} />
           <Grid templateColumns='0.5fr 1fr 0.5fr' justifyItems='center'>

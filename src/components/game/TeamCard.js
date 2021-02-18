@@ -57,6 +57,7 @@ export default function TeamCard (props) {
       color='white'
       fontWeight='bold'
       borderRadius='xl'
+      width='100%'
     >
       <Grid templateColumns={isDesktop ? '2fr 1fr' : '1fr'} alignItems='center' gap={[0, 4]}>
         {isDesktop && (

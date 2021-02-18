@@ -15,19 +15,16 @@ export default function Room ({ name }) {
 
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(false)
-  const [isCurrentUserJoined, setIsCurrentUserJoined] = useState(false)
 
   const [roomData, setRoomData] = useState({})
+
+  const currentUser = roomData && roomData.users && roomData.users[visitorID]
 
   useEffect(() => {
     // find the room and check if the current user is joined
     room.on('value', (snapshot) => {
       const roomData = snapshot.val()
       setRoomData(roomData)
-      if (roomData) {
-        const currentUser = roomData.users && roomData.users[visitorID]
-        setIsCurrentUserJoined(currentUser)
-      }
       setIsLoading(false)
     }, setError)
   }, [])
@@ -38,7 +35,7 @@ export default function Room ({ name }) {
 
   if (!roomData) return <RoomNotFound name={name} />
 
-  if (!isCurrentUserJoined) return <JoinRoom room={room} />
+  if (!currentUser) return <JoinRoom room={room} />
 
   return <GameRoom room={room} roomData={roomData} />
 }

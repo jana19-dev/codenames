@@ -13,7 +13,7 @@ export default function GameLog ({ room, roomData }) {
 
   useEffect(() => {
     isDesktop && logsEndRef.current.scrollIntoView({ behavior: 'smooth' })
-  }, [])
+  }, [roomData])
 
   return (
     <VStack
@@ -31,7 +31,7 @@ export default function GameLog ({ room, roomData }) {
           width='100%'
           overflow='auto'
         >
-          {roomData.logs.map((log, idx) => {
+          {Object.values(roomData.logs).map((log, idx) => {
             return (
               <Text
                 key={idx}
@@ -41,8 +41,9 @@ export default function GameLog ({ room, roomData }) {
                 py={[0, 2]}
                 borderRadius='lg'
                 bgGradient='radial(rgba(0, 0, 0, 0.40), rgba(0, 0, 0, 0.75))'
+                fontWeight='bold'
               >
-                {log}
+                <code>{log}</code>
               </Text>
             )
           })}
