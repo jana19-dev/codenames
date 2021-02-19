@@ -52,7 +52,7 @@ export default function Board ({ room, playSound }) {
   const onResetGame = async () => {
     await playSound()
     await onResetTeams()
-    await firebase.ref('rooms').child(room.name).child('logs').push(`⚪ ${roomOwner.nickname} has reset the game`)
+    await firebase.ref('rooms').child(room.name).child('logs').set(null)
     await firebase.ref('rooms').child(room.name).child('state').set({
       turn: 'generating_words'
     })
