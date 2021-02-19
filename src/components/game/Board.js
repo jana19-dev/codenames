@@ -6,6 +6,8 @@ import {
   CircularProgress
 } from '@chakra-ui/react'
 
+import firebase from 'utils/firebase'
+
 import GenerateWords from 'components/game/GenerateWords'
 
 import StatusText from 'components/game/StatusText'
@@ -17,29 +19,29 @@ import Card from 'components/game/Card'
 import ClueInput from 'components/game/ClueInput'
 import ClueText from 'components/game/ClueText'
 
-export default function Board ({ room, roomData, playSound }) {
+export default function Board ({ room, playSound }) {
   const visitorID = window.localStorage.getItem('visitorID')
-  const roomOwnerVisitorID = roomData.owner
+  const roomOwnerVisitorID = room.owner
 
-  const currentUser = roomData.users[visitorID]
-  const roomOwner = roomData.users[roomData.owner]
+  const currentUser = room.users[visitorID]
+  const roomOwner = room.users[room.owner]
 
   const onEndGuess = () => {
     playSound()
-    const currentTurn = roomData.state.turn
-    room.child('state').update({
+    const currentTurn = room.state.turn
+    firebase.ref('rooms').child(room.name).child('state').update({
       clue: null,
       count: null,
       turn: currentTurn === 'red_operative' ? 'blue_spymaster' : 'red_spymaster'
     })
     const color = currentUser.team === 'blue' ? '🔵 ' : '🔴'
-    room.child('logs').push(`${color} ${currentUser.nickname} clicks end guessing`)
+    firebase.ref('rooms').child(room.name).child('logs').push(`${color} ${currentUser.nickname} clicks end guessing`)
   }
 
   const onResetTeams = () => {
     playSound()
-    for (const visitorID of Object.keys(roomData.users)) {
-      const user = room.child('users').child(visitorID)
+    for (const visitorID of Object.keys(room.users)) {
+      const user = firebase.ref('rooms').child(room.name).child('users').child(visitorID)
       user.update({ team: null, role: null })
     }
   }
@@ -47,42 +49,42 @@ export default function Board ({ room, roomData, playSound }) {
   const onResetGame = () => {
     playSound()
     onResetTeams()
-    room.child('state').set({
+    firebase.ref('rooms').child(room.name).child('state').set({
       turn: 'generating_words'
     })
-    room.child('words').set(null)
-    room.child('logs').push(`⚪ ${roomOwner.nickname} has reset the game`)
+    firebase.ref('rooms').child(room.name).child('words').set(null)
+    firebase.ref('rooms').child(room.name).child('logs').push(`⚪ ${roomOwner.nickname} has reset the game`)
   }
 
   let showClueInput = false
-  if (roomData.state.turn === 'red_spymaster') {
+  if (room.state.turn === 'red_spymaster') {
     if (currentUser.team === 'red' && currentUser.role === 'spymaster') {
       showClueInput = true
     }
-  } else if (roomData.state.turn === 'blue_spymaster') {
+  } else if (room.state.turn === 'blue_spymaster') {
     if (currentUser.team === 'blue' && currentUser.role === 'spymaster') {
       showClueInput = true
     }
   }
 
   let showEndGuess = false
-  if (roomData.state.turn === 'red_operative') {
+  if (room.state.turn === 'red_operative') {
     if (currentUser.team === 'red' && currentUser.role === 'operative') {
       showEndGuess = true
     }
-  } else if (roomData.state.turn === 'blue_operative') {
+  } else if (room.state.turn === 'blue_operative') {
     if (currentUser.team === 'blue' && currentUser.role === 'operative') {
       showEndGuess = true
     }
   }
 
-  if (roomData.state.turn === 'generating_words' && roomOwnerVisitorID === visitorID) {
+  if (room.state.turn === 'generating_words' && roomOwnerVisitorID === visitorID) {
     return (
       <GenerateWords room={room} />
     )
   }
 
-  if (roomData.state.turn === 'generating_words' && roomOwnerVisitorID !== visitorID) {
+  if (room.state.turn === 'generating_words' && roomOwnerVisitorID !== visitorID) {
     return (
       <VStack justifyContent='center'>
         <CircularProgress isIndeterminate color='yellow.300' thickness='18px' size='48px' />
@@ -92,27 +94,26 @@ export default function Board ({ room, roomData, playSound }) {
 
   return (
     <VStack spacing={4}>
-      <StatusText room={room} roomData={roomData} />
+      <StatusText room={room} />
       <Grid
         templateColumns='1fr 1fr 1fr 1fr 1fr'
         gap={[1, 2]}
         height='fit-content'
         width='100%'
       >
-        {Object.values(roomData.words).map((word, idx) => (
+        {Object.values(room.words).map((word, idx) => (
           <Card
             key={idx}
             word={word}
             room={room}
-            roomData={roomData}
             playSound={playSound}
           />
         ))}
       </Grid>
-      {showClueInput && <ClueInput room={room} roomData={roomData} playSound={playSound} />}
-      {!showClueInput && roomData.state.clue && (
+      {showClueInput && <ClueInput room={room} playSound={playSound} />}
+      {!showClueInput && room.state.clue && (
         <HStack alignItems='center'>
-          <ClueText clue={roomData.state.clue} count={roomData.state.count} />
+          <ClueText clue={room.state.clue} count={room.state.count} />
           {showEndGuess && (
             <Button
               size='lg'
@@ -124,12 +125,12 @@ export default function Board ({ room, roomData, playSound }) {
           )}
         </HStack>
       )}
-      {roomData.state.turn.includes('won') && currentUser.visitorID === roomOwner.visitorID && (
+      {room.state.turn.includes('won') && currentUser.visitorID === roomOwner.visitorID && (
         <Button colorScheme='yellow' onClick={onResetGame}>
           PLAY NEXT GAME
         </Button>
       )}
-      {roomData.state.turn.includes('won') && currentUser.visitorID !== roomOwner.visitorID && (
+      {room.state.turn.includes('won') && currentUser.visitorID !== roomOwner.visitorID && (
         <StyledText value='Waiting for room owner to reset the game' />
       )}
       {(!currentUser.team || !currentUser.role) && (

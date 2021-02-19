@@ -33,7 +33,7 @@ function App () {
   }, [])
 
   return (
-    <Box height='100vh' bgGradient='radial(orange.400, red.600)'>
+    <Box minHeight='100vh' bgGradient='radial(orange.400, red.600)'>
       {routeResult || <Home />}
     </Box>
   )

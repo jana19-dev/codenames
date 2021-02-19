@@ -1,5 +1,7 @@
 import { useState, useRef } from 'react'
 
+import firebase from 'utils/firebase'
+
 import {
   Text,
   Modal,
@@ -25,7 +27,7 @@ export default function JoinRoom ({ room }) {
 
     const visitorID = window.localStorage.getItem('visitorID')
 
-    const user = room.child('users').child(visitorID)
+    const user = firebase.ref('rooms').child(room.name).child('users').child(visitorID)
     user.set({ visitorID, nickname })
   }
 

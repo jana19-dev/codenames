@@ -3,12 +3,12 @@ import {
   Text
 } from '@chakra-ui/react'
 
-export default function StatusText ({ room, roomData }) {
+export default function StatusText ({ room }) {
   const visitorID = window.localStorage.getItem('visitorID')
-  const currentUser = roomData.users[visitorID]
+  const currentUser = room.users[visitorID]
 
   let text = ''
-  if (roomData.state.turn === 'red_spymaster') {
+  if (room.state.turn === 'red_spymaster') {
     if (currentUser.team === 'red') {
       if (currentUser.role === 'spymaster') {
         text = 'Give your operatives a clue'
@@ -22,7 +22,7 @@ export default function StatusText ({ room, roomData }) {
     } else {
       text = 'Waiting for RED spymaster to give a clue'
     }
-  } else if (roomData.state.turn === 'blue_spymaster') {
+  } else if (room.state.turn === 'blue_spymaster') {
     if (currentUser.team === 'blue') {
       if (currentUser.role === 'spymaster') {
         text = 'Give your operatives a clue'
@@ -36,7 +36,7 @@ export default function StatusText ({ room, roomData }) {
     } else {
       text = 'Waiting for BLUE spymasters to give a clue'
     }
-  } else if (roomData.state.turn === 'red_operative') {
+  } else if (room.state.turn === 'red_operative') {
     if (currentUser.team === 'red') {
       if (currentUser.role === 'spymaster') {
         text = 'Waiting for your operatives to guess words'
@@ -50,7 +50,7 @@ export default function StatusText ({ room, roomData }) {
     } else {
       text = 'Waiting for RED operatives to guess words'
     }
-  } else if (roomData.state.turn === 'blue_operative') {
+  } else if (room.state.turn === 'blue_operative') {
     if (currentUser.team === 'blue') {
       if (currentUser.role === 'spymaster') {
         text = 'Waiting for your operatives to guess words'
@@ -64,8 +64,8 @@ export default function StatusText ({ room, roomData }) {
     } else {
       text = 'Waiting for RED operatives to guess words'
     }
-  } else if (roomData.state.turn.includes('won')) {
-    if (roomData.state.turn === 'red_won') {
+  } else if (room.state.turn.includes('won')) {
+    if (room.state.turn === 'red_won') {
       text = 'Red team wins! 😎'
     } else {
       text = 'Blue team wins! 😎'

@@ -1,5 +1,7 @@
 import { useState, useRef } from 'react'
 
+import firebase from 'utils/firebase'
+
 import {
   Text,
   Input,
@@ -9,18 +11,18 @@ import {
   InputRightElement
 } from '@chakra-ui/react'
 
-export default function GameChat ({ room, roomData, playSound }) {
+export default function GameChat ({ room, playSound }) {
   const messagesEndRef = useRef()
 
   const visitorID = window.localStorage.getItem('visitorID')
-  const currentUser = roomData.users[visitorID]
+  const currentUser = room.users[visitorID]
 
   const [message, setMessage] = useState('')
 
   const onSendMessage = (e) => {
     playSound()
     e.preventDefault()
-    room.child('chat').push({
+    firebase.ref('rooms').child(room.name).child('chat').push({
       nickname: currentUser.nickname,
       message
     })
@@ -43,7 +45,7 @@ export default function GameChat ({ room, roomData, playSound }) {
       overflowX='hidden'
     >
       <Text fontWeight='bold' mt={2}>Game Chat</Text>
-      {roomData.chat && (
+      {room.chat && (
         <VStack
           spacing={1}
           width='100%'
@@ -51,7 +53,7 @@ export default function GameChat ({ room, roomData, playSound }) {
           overflow='auto'
           ref={messagesEndRef}
         >
-          {Object.values(roomData.chat).map((chat, idx) => {
+          {Object.values(room.chat).map((chat, idx) => {
             return (
               <Text
                 key={idx}
@@ -73,7 +75,7 @@ export default function GameChat ({ room, roomData, playSound }) {
           justifySelf='flex-end'
           value={message}
           onChange={e => setMessage(e.target.value.slice(0, 40))}
-          border='none'
+          borderColor='white'
         />
         <InputRightElement width='4rem' mr={1}>
           <Button

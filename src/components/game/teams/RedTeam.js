@@ -2,15 +2,15 @@ import TeamCard from 'components/game/TeamCard'
 
 import redPNG from 'images/red.png'
 
-export default function RedTeam ({ room, roomData, playSound }) {
+export default function RedTeam ({ room, playSound }) {
   const visitorID = window.localStorage.getItem('visitorID')
 
-  const currentUser = roomData.users[visitorID]
+  const currentUser = room.users[visitorID]
 
-  const remainingRedCount = roomData.words && Object.values(roomData.words).filter(({ agent, guessed }) => agent === 'red' && !guessed).length
+  const remainingRedCount = room.words && Object.values(room.words).filter(({ agent, guessed }) => agent === 'red' && !guessed).length
 
-  const redOperatives = Object.values(roomData.users).filter(user => user.team === 'red' && user.role === 'operative')
-  const redSpymasters = Object.values(roomData.users).filter(user => user.team === 'red' && user.role === 'spymaster')
+  const redOperatives = Object.values(room.users).filter(user => user.team === 'red' && user.role === 'operative')
+  const redSpymasters = Object.values(room.users).filter(user => user.team === 'red' && user.role === 'spymaster')
 
   const isCurrentUserJoined = currentUser.team && currentUser.role
 

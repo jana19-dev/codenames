@@ -47,9 +47,9 @@ export default function GenerateWords ({ room }) {
       for (const word of shuffle([doubleAgent, ...blueAgents, ...redAgents, ...bystanders])) {
         words[word.label] = word
       }
-      room.child('words').set(words)
+      firebase.ref('rooms').child(room.name).child('words').set(words)
         .then(() => {
-          room.child('state').set({
+          firebase.ref('rooms').child(room.name).child('state').set({
             turn: 'red_spymaster'
           })
         })

@@ -26,15 +26,17 @@ import EditNickname from 'components/game/EditNickname'
 import useSound from 'use-sound'
 import soundEffect from 'sounds/soundEffect.mp3'
 
-export default function Settings ({ room, roomData }) {
+import firebase from 'utils/firebase'
+
+export default function Settings ({ room }) {
   const [play] = useSound(soundEffect)
 
   const visitorID = window.localStorage.getItem('visitorID')
 
   const roomURL = `${window.location.href}`
 
-  const roomOwner = roomData.users[roomData.owner]
-  const currentUser = roomData.users[visitorID]
+  const roomOwner = room.users[room.owner]
+  const currentUser = room.users[visitorID]
 
   const { hasCopied, onCopy } = useClipboard(roomURL)
 
@@ -52,59 +54,59 @@ export default function Settings ({ room, roomData }) {
 
   const onEditNickname = (nickname) => {
     if (nickname) {
-      const user = room.child('users').child(visitorID)
+      const user = firebase.ref('rooms').child(room.name).child('users').child(visitorID)
       user.update({ nickname })
     }
   }
 
   const onBecomeSpectator = () => {
     play()
-    const user = room.child('users').child(visitorID)
+    const user = firebase.ref('rooms').child(room.name).child('users').child(visitorID)
     user.update({ team: null, role: null })
   }
 
   const onResetWords = () => {
     play()
-    room.child('state').set({
+    firebase.ref('rooms').child(room.name).child('state').set({
       turn: 'generating_words'
     })
-    room.child('logs').push(`⚪ ${roomOwner.nickname} has reset the words`)
+    firebase.ref('rooms').child(room.name).child('logs').push(`⚪ ${roomOwner.nickname} has reset the words`)
   }
 
   const onResetTeams = () => {
     play()
-    for (const visitorID of Object.keys(roomData.users)) {
-      const user = room.child('users').child(visitorID)
+    for (const visitorID of Object.keys(room.users)) {
+      const user = firebase.ref('rooms').child(room.name).child('users').child(visitorID)
       user.update({ team: null, role: null })
     }
-    room.child('logs').push(`⚪ ${roomOwner.nickname} has reset the teams`)
+    firebase.ref('rooms').child(room.name).child('logs').push(`⚪ ${roomOwner.nickname} has reset the teams`)
   }
 
   const onResetGame = () => {
     play()
     onResetTeams()
-    room.child('state').set({
+    firebase.ref('rooms').child(room.name).child('state').set({
       turn: 'generating_words'
     })
-    room.child('words').set(null)
-    room.child('logs').push(`⚪ ${roomOwner.nickname} has reset the game`)
+    firebase.ref('rooms').child(room.name).child('words').set(null)
+    firebase.ref('rooms').child(room.name).child('logs').push(`⚪ ${roomOwner.nickname} has reset the game`)
   }
 
   const onLeaveRoom = () => {
     play()
     if (currentUser.visitorID === roomOwner.visitorID) {
       // transfer room ownership before removing this user
-      const nonOwners = Object.values(roomData.users).filter(user => user.visitorID !== roomOwner.visitorID)
+      const nonOwners = Object.values(room.users).filter(user => user.visitorID !== roomOwner.visitorID)
       if (nonOwners.length > 0) {
         const newOwner = nonOwners[0]
-        room.update({ owner: newOwner.visitorID })
-        room.child('users').child(currentUser.visitorID).set(null)
+        firebase.ref('rooms').child(room.name).update({ owner: newOwner.visitorID })
+        firebase.ref('rooms').child(room.name).child('users').child(currentUser.visitorID).set(null)
       } else {
         // no users left: delete the room
-        room.set(null)
+        firebase.ref('rooms').child(room.name).set(null)
       }
     } else {
-      room.child('users').child(currentUser.visitorID).set(null)
+      firebase.ref('rooms').child(room.name).child('users').child(currentUser.visitorID).set(null)
     }
   }
 
@@ -161,7 +163,7 @@ export default function Settings ({ room, roomData }) {
                 <FormControl>
                   <FormLabel>Active Players</FormLabel>
                   <Wrap mb={4}>
-                    {Object.values(roomData.users).filter(user => user.team && user.role).map(user => (
+                    {Object.values(room.users).filter(user => user.team && user.role).map(user => (
                       <Badge
                         key={user.visitorID}
                         mx={2}
@@ -178,7 +180,7 @@ export default function Settings ({ room, roomData }) {
                 <FormControl>
                   <FormLabel>Spectating Players</FormLabel>
                   <Wrap mb={4}>
-                    {Object.values(roomData.users).filter(user => !user.team || !user.role).map(user => (
+                    {Object.values(room.users).filter(user => !user.team || !user.role).map(user => (
                       <Badge
                         key={user.visitorID}
                         mx={2}

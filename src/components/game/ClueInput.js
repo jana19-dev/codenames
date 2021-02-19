@@ -1,5 +1,7 @@
 import { useState } from 'react'
 
+import firebase from 'utils/firebase'
+
 import {
   Input,
   Button,
@@ -15,11 +17,11 @@ import {
   InputRightElement
 } from '@chakra-ui/react'
 
-export default function ClueInput ({ room, roomData, playSound }) {
+export default function ClueInput ({ room, playSound }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const visitorID = window.localStorage.getItem('visitorID')
-  const currentUser = roomData.users[visitorID]
+  const currentUser = room.users[visitorID]
 
   const [clue, setClue] = useState('')
   const [count, setCount] = useState(1)
@@ -27,14 +29,14 @@ export default function ClueInput ({ room, roomData, playSound }) {
   const onSendClue = (e) => {
     playSound()
     e.preventDefault()
-    const currentTurn = roomData.state.turn
-    room.child('state').update({
+    const currentTurn = room.state.turn
+    firebase.ref('rooms').child(room.name).child('state').update({
       clue,
       count,
       turn: currentTurn === 'red_spymaster' ? 'red_operative' : 'blue_operative'
     })
     const color = currentUser.team === 'blue' ? '🔵 ' : '🔴'
-    room.child('logs').push(`${color} ${currentUser.nickname} gives clue ${clue} - ${count}`)
+    firebase.ref('rooms').child(room.name).child('logs').push(`${color} ${currentUser.nickname} gives clue ${clue} - ${count}`)
   }
 
   const onClueCountOpen = () => {

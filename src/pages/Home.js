@@ -1,5 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 
+import FindRooms from 'components/FindRooms'
+
 import { generateSlug } from 'random-word-slugs'
 
 import {
@@ -24,6 +26,8 @@ import soundEffect from 'sounds/soundEffect.mp3'
 
 export default function Home () {
   const [isLoading, setIsLoading] = useState(false)
+
+  const [isFindingRooms, setIsFindingRooms] = useState(false)
 
   const [play] = useSound(soundEffect)
 
@@ -58,33 +62,44 @@ export default function Home () {
   }
 
   return (
-    <Modal initialFocusRef={nicknameRef} isOpen isCentered>
-      <ModalOverlay />
-      <ModalContent pb={4}>
-        <ModalHeader fontSize='2xl' textAlign='center'>Welcome to CODENAMES</ModalHeader>
-        <ModalBody>
-          <VStack spacing={8} as='form' onSubmit={onRoomCreate}>
-            <Image ignoreFallback height='65px' src={logoSVG} alt='CODENAMES' />
-            <Text>To create a new room, choose a nickname</Text>
-            <Input
-              required
-              ref={nicknameRef}
-              value={nickname}
-              onChange={e => setNickname(e.target.value.trim())}
-              placeholder='Enter your nickname'
-              maxW='250px'
-            />
-            <Button
-              type='submit'
-              colorScheme='yellow'
-              size='lg'
-              isLoading={isLoading}
-            >
-              Create Room
-            </Button>
-          </VStack>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+    <>
+      {isFindingRooms && <FindRooms onClose={() => setIsFindingRooms(false)} />}
+      <Modal initialFocusRef={nicknameRef} isOpen isCentered>
+        <ModalOverlay />
+        <ModalContent pb={4}>
+          <ModalHeader fontSize='2xl' textAlign='center'>Welcome to CODENAMES</ModalHeader>
+          <ModalBody>
+            <VStack spacing={8} as='form' onSubmit={onRoomCreate}>
+              <Image ignoreFallback height='65px' src={logoSVG} alt='CODENAMES' />
+              <Text>To create a new room, choose a nickname</Text>
+              <Input
+                required
+                ref={nicknameRef}
+                value={nickname}
+                onChange={e => setNickname(e.target.value.trim())}
+                placeholder='Enter your nickname'
+                maxW='250px'
+              />
+              <Button
+                type='submit'
+                colorScheme='yellow'
+                size='lg'
+                isLoading={isLoading}
+              >
+                Create Room
+              </Button>
+              <Text>OR</Text>
+              <Button
+                colorScheme='yellow'
+                size='lg'
+                onClick={() => setIsFindingRooms(true)}
+              >
+                Find Rooms
+              </Button>
+            </VStack>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+    </>
   )
 }
