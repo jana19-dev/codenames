@@ -82,7 +82,7 @@ export default function GameRoom ({ room, roomData }) {
       )}
       <Grid>
         <Link
-          href='https://jana19.dev'
+          href='https://jana19.netlify.app'
           fontWeight='bold'
           color='white'
           textAlign={['center', 'right']}
