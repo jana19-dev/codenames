@@ -68,17 +68,16 @@ export default function GameRoom ({ room, playSound }) {
           </Grid>
         </Grid>
       )}
-      <Grid>
+      <Grid mt={2}>
         <Link
-          py={2}
+          pt={2}
           href='https://jana19.dev'
           fontWeight='bold'
           color='white'
           textAlign={['center', 'right']}
           width='100%'
-          fontSize='sm'
         >
-          developed by jana19.dev
+          Developed by jana19.dev
         </Link>
       </Grid>
     </Box>

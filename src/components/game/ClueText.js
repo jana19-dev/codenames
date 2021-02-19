@@ -21,7 +21,7 @@ export default function ClueText ({ clue, count }) {
         letterSpacing={['0.5px', '1px']}
         color='black'
       >
-        {clue} - {count}
+        {clue} 🤞 {count}
       </Text>
     </Flex>
   )

@@ -31,7 +31,7 @@ export default function ClueInput ({ room, playSound }) {
     await playSound()
     const currentTurn = room.state.turn
     const color = currentUser.team === 'blue' ? '🔵 ' : '🔴'
-    await firebase.ref('rooms').child(room.name).child('logs').push(`${color} ${currentUser.nickname} gives clue ${clue} - ${count}`)
+    await firebase.ref('rooms').child(room.name).child('logs').push(`${color} ${currentUser.nickname} gives clue ${clue} 🤞 ${count}`)
     await firebase.ref('rooms').child(room.name).child('state').update({
       clue,
       count,

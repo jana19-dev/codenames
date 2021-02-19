@@ -8,7 +8,8 @@ import {
   Badge,
   VStack,
   IconButton,
-  useBreakpointValue
+  useBreakpointValue,
+  HStack
 } from '@chakra-ui/react'
 
 import { FaHandPointUp } from 'react-icons/fa'
@@ -58,16 +59,20 @@ export default function Card ({ word, room, playSound }) {
   let bgGradient = ''
   let alignItems = 'center'
   if (currentUser.role === 'spymaster' || room.state.turn.includes('won')) {
-    bgColor = `${word.agent === 'red' ? '#9B2C2C' : word.agent === 'blue' ? '#2c5282' : word.agent === 'double' ? 'black' : '#f3d8b5'}`
+    bgColor = `${word.agent === 'red' ? '#a32424' : word.agent === 'blue' ? '#4896f9' : word.agent === 'double' ? 'black' : '#f3d8b5'}`
     color = 'white'
     bgGradient = 'radial(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.55))'
   }
   if (room.state.turn.includes('operative') && currentUser.role === 'operative') {
+    alignItems = 'flex-start'
+  }
+  if (word.guessed && !room.state.turn.includes('won')) {
     alignItems = 'flex-end'
   }
 
   let cardBackground = {}
   if (word.guessed) {
+    color = 'white'
     const bgURL = word.agent === 'red' ? redPNG : word.agent === 'blue' ? bluePNG : word.agent === 'bystander' ? bystanderPNG : doublePNG
     cardBackground = {
       bg: `url(${bgURL})`,
@@ -113,6 +118,10 @@ export default function Card ({ word, room, playSound }) {
           await firebase.ref('rooms').child(room.name).child('logs').push('⚪ Red team wins! 😎 ')
         }
       } else {
+        // clear hints
+        for (const word of Object.keys(room.words)) {
+          await firebase.ref('rooms').child(room.name).child('words').child(word).update({ hints: null })
+        }
         await firebase.ref('rooms').child(room.name).child('state').update({
           clue: null,
           count: null,
@@ -153,68 +162,57 @@ export default function Card ({ word, room, playSound }) {
       alignItems={alignItems}
       justifyContent='center'
       borderRadius='lg'
-      height={['60px', '120px']}
-      position='relative'
+      minH={['60px', '120px']}
       letterSpacing='1px'
       animate={cardControls}
       transition={{ duration: 1 }}
+      p={1}
       {...cardBackground}
     >
-      {(!word.guessed || room.state.turn.includes('won')) && (
-        <>
-          {canGuess && (
-            <>
-              <IconButton
-                position='absolute'
-                top={2}
-                left={2}
-                size={isDesktop ? 'md' : 'xs'}
-                colorScheme={word.hints && word.hints.includes(currentUser.nickname) ? 'yellow' : 'white'}
-                aria-label='Reveal'
-                fontSize='22px'
-                icon={<GoLightBulb color='black' />}
-                onClick={onHint}
-              />
-              <IconButton
-                position='absolute'
-                top={2}
-                right={2}
-                size={isDesktop ? 'md' : 'xs'}
-                colorScheme='yellow'
-                aria-label='Reveal'
-                fontSize='22px'
-                icon={<FaHandPointUp />}
-                onClick={onGuess}
-              />
-            </>
-          )}
-          <VStack height='90%' justifyContent={(canGuess || room.state.turn.includes('won')) ? 'flex-end' : 'center'}>
-            {canGuess && word.hints && (
-              <>
-                {word.hints.map(hintedBy => (
-                  <Badge
-                    key={hintedBy}
-                    colorScheme={currentUser.team === 'blue' ? 'blue' : currentUser.team === 'red' ? 'red' : 'gray'}
-                  >
-                    {hintedBy}
-                  </Badge>
-                ))}
-              </>
-            )}
-            {(!word.guessed || room.state.turn.includes('won')) && (
-              <Text
-                fontWeight='bold'
-                fontSize={['8px', 'xs', 'sm', 'lg']}
-                textAlign='center'
-                background={room.state.turn.includes('won') ? 'black' : 'none'}
-                p={room.state.turn.includes('won') ? 1 : 0}
+      <VStack justifyContent={(canGuess || room.state.turn.includes('won') || word.guessed) ? 'flex-end' : 'center'} width='100%'>
+        {canGuess && (
+          <Flex justifyContent='space-between' width='100%'>
+            <IconButton
+              size={isDesktop ? 'md' : 'xs'}
+              colorScheme={word.hints && word.hints.includes(currentUser.nickname) ? 'yellow' : 'white'}
+              aria-label='Reveal'
+              fontSize={['14px', '22px']}
+              icon={<GoLightBulb color='black' />}
+              onClick={onHint}
+            />
+            <IconButton
+              size={isDesktop ? 'md' : 'xs'}
+              colorScheme='yellow'
+              aria-label='Reveal'
+              fontSize={['14px', '22px']}
+              icon={<FaHandPointUp />}
+              onClick={onGuess}
+            />
+          </Flex>
+        )}
+        <Text
+          fontWeight='bold'
+          fontSize={['8px', 'xs', 'sm', 'lg']}
+          textAlign='center'
+          bgGradient={room.state.turn.includes('won') || word.guessed ? 'radial(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.55))' : 'none'}
+          px={1}
+        >
+          {word.label}
+        </Text>
+        {canGuess && word.hints && (
+          <HStack maxW={['80px', '150px']} overflowX='auto'>
+            {word.hints.map(hintedBy => (
+              <Badge
+                key={hintedBy}
+                colorScheme={currentUser.team === 'blue' ? 'blue' : currentUser.team === 'red' ? 'red' : 'gray'}
+                fontSize={['8px', 'sm']}
               >
-                {word.label}
-              </Text>
-            )}
-          </VStack>
-        </>
-      )}
+                {hintedBy}
+              </Badge>
+            ))}
+          </HStack>
+        )}
+      </VStack>
     </MotionCard>
   )
 }

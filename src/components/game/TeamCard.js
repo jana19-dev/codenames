@@ -92,7 +92,7 @@ export default function TeamCard (props) {
             </Text>
           ))}
         </Wrap>
-        {!isCurrentUserJoined && <JoinTeam role='operative' team={team} playSound={playSound} />}
+        {!isCurrentUserJoined && <JoinTeam room={room} role='operative' team={team} playSound={playSound} />}
       </FormControl>
       <FormControl>
         <FormLabel fontSize={['xs', 'md']}>Spymaster(s)</FormLabel>
