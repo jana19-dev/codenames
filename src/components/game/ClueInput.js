@@ -35,7 +35,7 @@ export default function ClueInput ({ room, playSound }) {
     await playSound()
     let isValidClue = true
     for (const word of Object.keys(room.words)) {
-      if (word.includes(clue)) {
+      if (clue.includes(word)) {
         isValidClue = false
         break
       }
