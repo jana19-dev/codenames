@@ -31,6 +31,10 @@ export default function Board ({ room, playSound }) {
     const currentTurn = room.state.turn
     await playSound()
     await firebase.ref('rooms').child(room.name).child('logs').push(`${color} ${currentUser.nickname} clicks end guessing`)
+    // clear hints
+    for (const word of Object.keys(room.words)) {
+      await firebase.ref('rooms').child(room.name).child('words').child(word).update({ hints: null })
+    }
     await firebase.ref('rooms').child(room.name).child('state').update({
       clue: null,
       count: null,
