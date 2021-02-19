@@ -104,6 +104,7 @@ export default function Settings ({ room }) {
     } else {
       await firebase.ref('rooms').child(room.name).child('users').child(currentUser.visitorID).set(null)
     }
+    window.location.href = '/'
   }
 
   return (

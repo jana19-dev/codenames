@@ -37,7 +37,7 @@ export default function FindRooms ({ onClose }) {
   if (error) return <Error error={error} />
 
   return (
-    <Modal isOpen isCentered onClose={onClose}>
+    <Modal isOpen isCentered onClose={onClose} scrollBehavior='inside'>
       <ModalOverlay />
       <ModalContent pb={4}>
         <ModalCloseButton />
