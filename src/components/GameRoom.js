@@ -70,7 +70,7 @@ export default function GameRoom ({ room, playSound }) {
       )}
       <Grid mt={2}>
         <Link
-          pt={2}
+          py={2}
           href='https://jana19.dev'
           fontWeight='bold'
           color='white'

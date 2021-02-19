@@ -125,6 +125,7 @@ export default function ClueInput ({ room, playSound }) {
         placeholder='Type your clue here'
         value={clue}
         onChange={e => setClue(e.target.value.trim().toUpperCase().slice(0, 20))}
+        borderRadius='2xl'
       />
       <InputRightElement width='6rem' mr={1}>
         <Button
