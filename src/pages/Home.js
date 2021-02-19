@@ -53,13 +53,13 @@ export default function Home () {
 
   return (
     <>
-      {isFindingRooms && <FindRooms onClose={() => setIsFindingRooms(false)} />}
       <Modal initialFocusRef={nicknameRef} isOpen isCentered>
         <ModalOverlay />
         <ModalContent pb={4}>
           <ModalHeader fontSize='2xl' textAlign='center'>Welcome to CODENAMES</ModalHeader>
           <ModalBody>
-            <VStack spacing={8} as='form' onSubmit={onRoomCreate}>
+            {isFindingRooms && <FindRooms onClose={() => setIsFindingRooms(false)} />}
+            <VStack spacing={4} as='form' onSubmit={onRoomCreate}>
               <Image ignoreFallback height='65px' src={logoSVG} alt='CODENAMES' />
               <Text>To create a new room, choose a nickname</Text>
               <Input

@@ -22,7 +22,7 @@ export default function RoomNotFound ({ name }) {
           <VStack spacing={8}>
             <Image maxW='200px' height='150px' ignoreFallback src={roomNotFoundSVG} alt='Room Not Found' />
             <Text fontWeight='bold'>{name}</Text>
-            <Button colorScheme='yellow' onClick={() => {window.location.href = '/' }}>
+            <Button colorScheme='yellow' onClick={() => { window.location.href = '/' }}>
               Go Home
             </Button>
           </VStack>

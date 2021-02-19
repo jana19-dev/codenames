@@ -39,7 +39,7 @@ export default function FindRooms ({ onClose }) {
   return (
     <Modal isOpen isCentered onClose={onClose} scrollBehavior='inside'>
       <ModalOverlay />
-      <ModalContent pb={4}>
+      <ModalContent py={4}>
         <ModalCloseButton />
         <ModalHeader fontSize='2xl' textAlign='center'>Join a Room</ModalHeader>
         <ModalBody>
@@ -50,11 +50,24 @@ export default function FindRooms ({ onClose }) {
             )}
             {!isLoading && (
               Object.values(rooms).map(room => (
-                <Flex key={room.name} justifyContent='space-between' alignItems='center' width='100%'>
-                  <Button colorScheme='yellow' onClick={() => { window.location.href = `/rooms/${room.name}` }}>
+                <Flex
+                  key={room.name}
+                  justifyContent='space-between'
+                  alignItems='center'
+                  width='100%'
+                >
+                  <Button
+                    colorScheme='yellow'
+                    onClick={() => { window.location.href = `/rooms/${room.name}` }}
+                  >
                     {room.name}
                   </Button>
-                  <Text fontWeight='bold' fontSize='lg'>{Object.keys(room.users).length} users</Text>
+                  <Text
+                    fontWeight='bold'
+                    fontSize='lg'
+                  >
+                    {Object.keys(room.users).length} users
+                  </Text>
                 </Flex>
               ))
             )}
