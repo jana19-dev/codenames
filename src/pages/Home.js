@@ -19,8 +19,13 @@ import logoSVG from 'images/logo.svg'
 
 import firebase from 'utils/firebase'
 
+import useSound from 'use-sound'
+import soundEffect from 'sounds/soundEffect.mp3'
+
 export default function Home () {
   const [isLoading, setIsLoading] = useState(false)
+
+  const [play] = useSound(soundEffect)
 
   const nicknameRef = useRef()
   const [nickname, setNickname] = useState('')
@@ -32,6 +37,8 @@ export default function Home () {
 
   const onRoomCreate = (e) => {
     e.preventDefault()
+    play()
+
     setIsLoading(true)
 
     const name = generateSlug()

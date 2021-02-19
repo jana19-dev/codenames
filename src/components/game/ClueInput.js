@@ -15,7 +15,7 @@ import {
   InputRightElement
 } from '@chakra-ui/react'
 
-export default function ClueInput ({ room, roomData }) {
+export default function ClueInput ({ room, roomData, playSound }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const visitorID = window.localStorage.getItem('visitorID')
@@ -25,6 +25,7 @@ export default function ClueInput ({ room, roomData }) {
   const [count, setCount] = useState(1)
 
   const onSendClue = (e) => {
+    playSound()
     e.preventDefault()
     const currentTurn = roomData.state.turn
     room.child('state').update({

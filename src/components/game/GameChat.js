@@ -9,7 +9,7 @@ import {
   InputRightElement
 } from '@chakra-ui/react'
 
-export default function GameChat ({ room, roomData }) {
+export default function GameChat ({ room, roomData, playSound }) {
   const messagesEndRef = useRef()
 
   const visitorID = window.localStorage.getItem('visitorID')
@@ -18,6 +18,7 @@ export default function GameChat ({ room, roomData }) {
   const [message, setMessage] = useState('')
 
   const onSendMessage = (e) => {
+    playSound()
     e.preventDefault()
     room.child('chat').push({
       nickname: currentUser.nickname,
@@ -25,7 +26,9 @@ export default function GameChat ({ room, roomData }) {
     })
       .then(() => {
         setMessage('')
-        messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight
+        if (messagesEndRef.current) {
+          messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight
+        }
       })
   }
 
@@ -33,7 +36,7 @@ export default function GameChat ({ room, roomData }) {
     <VStack
       justifyContent='space-between'
       height={['350px', '380px']}
-      maxW={['100%', '420px']}
+      w={['100%', '420px']}
       bgGradient='radial(rgba(0, 0, 0, 0.40), rgba(0, 0, 0, 0.75))'
       color='white'
       borderRadius='lg'
@@ -59,7 +62,7 @@ export default function GameChat ({ room, roomData }) {
                 borderRadius='lg'
                 bgGradient='radial(rgba(0, 0, 0, 0.40), rgba(0, 0, 0, 0.75))'
               >
-                <strong>{chat.nickname}</strong> 👉 {chat.message}
+                <code><strong>{chat.nickname}</strong> 👉 {chat.message}</code>
               </Text>
             )
           })}

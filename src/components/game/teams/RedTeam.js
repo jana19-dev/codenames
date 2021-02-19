@@ -2,7 +2,7 @@ import TeamCard from 'components/game/TeamCard'
 
 import redPNG from 'images/red.png'
 
-export default function RedTeam ({ room, roomData }) {
+export default function RedTeam ({ room, roomData, playSound }) {
   const visitorID = window.localStorage.getItem('visitorID')
 
   const currentUser = roomData.users[visitorID]
@@ -23,6 +23,7 @@ export default function RedTeam ({ room, roomData }) {
       operatives={redOperatives}
       spymasters={redSpymasters}
       isCurrentUserJoined={isCurrentUserJoined}
+      playSound={playSound}
     />
   )
 }

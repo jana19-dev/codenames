@@ -16,7 +16,12 @@ import {
   BiCheck
 } from 'react-icons/bi'
 
+import useSound from 'use-sound'
+import soundEffect from 'sounds/soundEffect.mp3'
+
 const EditableControls = (props) => {
+  const [play] = useSound(soundEffect)
+
   const inputRef = useRef()
   const editButtonRef = useRef()
 
@@ -41,6 +46,7 @@ const EditableControls = (props) => {
   }, [defaultValue])
 
   const handleOnSubmit = (e) => {
+    play()
     e.preventDefault()
     setIsEditing(false)
     editButtonRef.current.focus()
@@ -50,12 +56,14 @@ const EditableControls = (props) => {
   }
 
   const onEdit = () => {
+    play()
     setIsEditing(true)
     inputRef.current.focus()
     inputRef.current.setSelectionRange(0, value.length)
   }
 
   const onCancel = () => {
+    play()
     setValue(defaultValue)
     setIsEditing(false)
     setTimeout(() => editButtonRef.current.focus(), 1)

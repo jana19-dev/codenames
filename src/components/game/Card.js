@@ -21,7 +21,7 @@ import { motion, useAnimation } from 'framer-motion'
 
 const MotionCard = motion.custom(Flex)
 
-export default function Card ({ word, room, roomData }) {
+export default function Card ({ word, room, roomData, playSound }) {
   const cardControls = useAnimation()
 
   const isDesktop = useBreakpointValue({ md: true })
@@ -74,6 +74,7 @@ export default function Card ({ word, room, roomData }) {
   }
 
   const onHint = () => {
+    playSound()
     let hints = word.hints ? [...word.hints] : []
     if (hints.includes(currentUser.nickname)) {
       hints = hints.filter(hintedBy => hintedBy !== currentUser.nickname)
@@ -86,6 +87,7 @@ export default function Card ({ word, room, roomData }) {
   }
 
   const onGuess = async () => {
+    await playSound()
     await cardControls.start({
       rotateY: 360
     })

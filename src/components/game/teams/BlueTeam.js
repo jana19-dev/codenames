@@ -2,7 +2,7 @@ import TeamCard from 'components/game/TeamCard'
 
 import bluePNG from 'images/blue.png'
 
-export default function BlueTeam ({ room, roomData }) {
+export default function BlueTeam ({ room, roomData, playSound }) {
   const visitorID = window.localStorage.getItem('visitorID')
 
   const currentUser = roomData.users[visitorID]
@@ -24,6 +24,7 @@ export default function BlueTeam ({ room, roomData }) {
       operatives={blueOperatives}
       spymasters={blueSpymasters}
       isCurrentUserJoined={isCurrentUserJoined}
+      playSound={playSound}
     />
   )
 }

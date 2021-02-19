@@ -6,20 +6,22 @@ import {
   useBreakpointValue
 } from '@chakra-ui/react'
 
-export default function GameLog ({ room, roomData }) {
+export default function GameLog ({ room, roomData, playSound }) {
   const isDesktop = useBreakpointValue({ xl: true })
 
   const logsEndRef = useRef()
 
   useEffect(() => {
-    logsEndRef.current.scrollTop = logsEndRef.current.scrollHeight
+    if (logsEndRef.current) {
+      logsEndRef.current.scrollTop = logsEndRef.current.scrollHeight
+    }
   }, [isDesktop, roomData])
 
   return (
     <VStack
       width='100%'
       height={['280px', '380px']}
-      maxW={['100%', '420px']}
+      w={['100%', '420px']}
       bgGradient='radial(rgba(0, 0, 0, 0.40), rgba(0, 0, 0, 0.75))'
       color='white'
       borderRadius='lg'

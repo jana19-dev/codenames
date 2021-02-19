@@ -19,7 +19,12 @@ import Board from 'components/game/Board'
 import GameLog from 'components/game/GameLog'
 import GameChat from 'components/game/GameChat'
 
+import useSound from 'use-sound'
+import soundEffect from 'sounds/soundEffect.mp3'
+
 export default function GameRoom ({ room, roomData }) {
+  const [playSound] = useSound(soundEffect, { interrupt: true })
+
   const isDesktop = useBreakpointValue({ xl: true })
 
   return (
@@ -47,13 +52,13 @@ export default function GameRoom ({ room, roomData }) {
           overflow='auto'
         >
           <VStack spacing={8} justifyContent='space-around' maxH='775px'>
-            <RedTeam room={room} roomData={roomData} />
-            <BlueTeam room={room} roomData={roomData} />
+            <RedTeam room={room} roomData={roomData} playSound={playSound} />
+            <BlueTeam room={room} roomData={roomData} playSound={playSound} />
           </VStack>
-          <Board room={room} roomData={roomData} />
+          <Board room={room} roomData={roomData} playSound={playSound} />
           <VStack spacing={8}>
-            <GameLog room={room} roomData={roomData} />
-            <GameChat room={room} roomData={roomData} />
+            <GameLog room={room} roomData={roomData} playSound={playSound} />
+            <GameChat room={room} roomData={roomData} playSound={playSound} />
           </VStack>
         </Grid>
       )}
@@ -64,14 +69,14 @@ export default function GameRoom ({ room, roomData }) {
           overflow='auto'
           overflowX='hidden'
         >
-          <Board room={room} roomData={roomData} />
+          <Board room={room} roomData={roomData} playSound={playSound} />
           <Grid templateColumns='0.5fr 1fr 0.5fr' justifyItems='center'>
-            <RedTeam room={room} roomData={roomData} />
-            <GameLog room={room} roomData={roomData} />
-            <BlueTeam room={room} roomData={roomData} />
+            <RedTeam room={room} roomData={roomData} playSound={playSound} />
+            <GameLog room={room} roomData={roomData} playSound={playSound} />
+            <BlueTeam room={room} roomData={roomData} playSound={playSound} />
           </Grid>
           <Grid justifyItems='center'>
-            <GameChat room={room} roomData={roomData} />
+            <GameChat room={room} roomData={roomData} playSound={playSound} />
           </Grid>
         </Grid>
       )}

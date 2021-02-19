@@ -23,10 +23,15 @@ import { ImExit } from 'react-icons/im'
 
 import EditNickname from 'components/game/EditNickname'
 
+import useSound from 'use-sound'
+import soundEffect from 'sounds/soundEffect.mp3'
+
 export default function Settings ({ room, roomData }) {
+  const [play] = useSound(soundEffect)
+
   const visitorID = window.localStorage.getItem('visitorID')
 
-  const roomURL = `https://adsadasdsa/rooms/${room.name}`
+  const roomURL = `${window.location.href}`
 
   const roomOwner = roomData.users[roomData.owner]
   const currentUser = roomData.users[visitorID]
@@ -34,6 +39,16 @@ export default function Settings ({ room, roomData }) {
   const { hasCopied, onCopy } = useClipboard(roomURL)
 
   const { isOpen, onOpen, onClose } = useDisclosure()
+
+  const handleOpen = () => {
+    play()
+    onOpen()
+  }
+
+  const handleOnCopy = () => {
+    play()
+    onCopy()
+  }
 
   const onEditNickname = (nickname) => {
     if (nickname) {
@@ -43,11 +58,13 @@ export default function Settings ({ room, roomData }) {
   }
 
   const onBecomeSpectator = () => {
+    play()
     const user = room.child('users').child(visitorID)
     user.update({ team: null, role: null })
   }
 
   const onResetWords = () => {
+    play()
     room.child('state').set({
       turn: 'generating_words'
     })
@@ -55,6 +72,7 @@ export default function Settings ({ room, roomData }) {
   }
 
   const onResetTeams = () => {
+    play()
     for (const visitorID of Object.keys(roomData.users)) {
       const user = room.child('users').child(visitorID)
       user.update({ team: null, role: null })
@@ -63,6 +81,7 @@ export default function Settings ({ room, roomData }) {
   }
 
   const onResetGame = () => {
+    play()
     onResetTeams()
     room.child('state').set({
       turn: 'generating_words'
@@ -72,6 +91,7 @@ export default function Settings ({ room, roomData }) {
   }
 
   const onLeaveRoom = () => {
+    play()
     if (currentUser.visitorID === roomOwner.visitorID) {
       // transfer room ownership before removing this user
       const nonOwners = Object.values(roomData.users).filter(user => user.visitorID !== roomOwner.visitorID)
@@ -90,7 +110,7 @@ export default function Settings ({ room, roomData }) {
 
   return (
     <>
-      <Button colorScheme='yellow' onClick={onOpen} leftIcon={<FcSettings fontSize='26px' />}>
+      <Button colorScheme='yellow' onClick={handleOpen} leftIcon={<FcSettings fontSize='26px' />}>
         Settings
       </Button>
       <Drawer
@@ -109,7 +129,7 @@ export default function Settings ({ room, roomData }) {
                   <Text fontSize='sm' fontWeight='bold' mb={2}>
                     {roomURL}
                   </Text>
-                  <Button onClick={onCopy} colorScheme='yellow'>
+                  <Button onClick={handleOnCopy} colorScheme='yellow'>
                     {hasCopied ? 'Copied' : 'Copy Room Link'}
                   </Button>
                 </FormControl>

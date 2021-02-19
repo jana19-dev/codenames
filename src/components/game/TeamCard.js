@@ -12,8 +12,9 @@ import {
   useBreakpointValue
 } from '@chakra-ui/react'
 
-const JoinTeam = ({ room, team, role }) => {
+const JoinTeam = ({ room, team, role, playSound }) => {
   const onJoin = () => {
+    playSound()
     const visitorID = window.localStorage.getItem('visitorID')
     const user = room.child('users').child(visitorID)
     user.child('team').set(team)
@@ -42,6 +43,7 @@ export default function TeamCard (props) {
     image,
     team,
     count,
+    playSound,
     operatives = [],
     spymasters = [],
     isCurrentUserJoined
@@ -87,7 +89,7 @@ export default function TeamCard (props) {
             </Text>
           ))}
         </Wrap>
-        {!isCurrentUserJoined && <JoinTeam room={room} role='operative' team={team} />}
+        {!isCurrentUserJoined && <JoinTeam room={room} role='operative' team={team} playSound={playSound} />}
       </FormControl>
       <FormControl>
         <FormLabel fontSize={['xs', 'md']}>Spymaster(s)</FormLabel>
@@ -104,7 +106,7 @@ export default function TeamCard (props) {
             </Text>
           ))}
         </Wrap>
-        {!isCurrentUserJoined && <JoinTeam room={room} role='spymaster' team={team} />}
+        {!isCurrentUserJoined && <JoinTeam room={room} role='spymaster' team={team} playSound={playSound} />}
       </FormControl>
     </VStack>
   )

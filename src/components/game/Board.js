@@ -17,7 +17,7 @@ import Card from 'components/game/Card'
 import ClueInput from 'components/game/ClueInput'
 import ClueText from 'components/game/ClueText'
 
-export default function Board ({ room, roomData }) {
+export default function Board ({ room, roomData, playSound }) {
   const visitorID = window.localStorage.getItem('visitorID')
   const roomOwnerVisitorID = roomData.owner
 
@@ -25,6 +25,7 @@ export default function Board ({ room, roomData }) {
   const roomOwner = roomData.users[roomData.owner]
 
   const onEndGuess = () => {
+    playSound()
     const currentTurn = roomData.state.turn
     room.child('state').update({
       clue: null,
@@ -36,6 +37,7 @@ export default function Board ({ room, roomData }) {
   }
 
   const onResetTeams = () => {
+    playSound()
     for (const visitorID of Object.keys(roomData.users)) {
       const user = room.child('users').child(visitorID)
       user.update({ team: null, role: null })
@@ -43,6 +45,7 @@ export default function Board ({ room, roomData }) {
   }
 
   const onResetGame = () => {
+    playSound()
     onResetTeams()
     room.child('state').set({
       turn: 'generating_words'
@@ -102,10 +105,11 @@ export default function Board ({ room, roomData }) {
             word={word}
             room={room}
             roomData={roomData}
+            playSound={playSound}
           />
         ))}
       </Grid>
-      {showClueInput && <ClueInput room={room} roomData={roomData} />}
+      {showClueInput && <ClueInput room={room} roomData={roomData} playSound={playSound} />}
       {!showClueInput && roomData.state.clue && (
         <HStack alignItems='center'>
           <ClueText clue={roomData.state.clue} count={roomData.state.count} />
