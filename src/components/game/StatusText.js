@@ -91,6 +91,20 @@ export default function StatusText ({ room }) {
       >
         {text}
       </Text>
+      {room.state.timer && (
+        <Text
+          ml={2}
+          px={1}
+          fontWeight='bold'
+          fontSize={['sm', 'lg', '2xl']}
+          letterSpacing={['0.5px', '1px']}
+          textAlign='center'
+          bgGradient='linear(to-r, red.800, red.900)'
+          borderRadius='xl'
+        >
+          {room.state.timer}s
+        </Text>
+      )}
     </Flex>
   )
 }

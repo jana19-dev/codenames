@@ -82,7 +82,7 @@ export default function Settings ({ room }) {
   const onResetGame = async () => {
     await play()
     await onResetTeams()
-    await firebase.ref('rooms').child(room.name).child('logs').set(null)
+    // await firebase.ref('rooms').child(room.name).child('logs').set(null)
     await firebase.ref('rooms').child(room.name).child('state').set({
       turn: 'generating_words'
     })

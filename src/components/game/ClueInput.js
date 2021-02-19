@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import firebase from 'utils/firebase'
 
@@ -28,6 +28,36 @@ export default function ClueInput ({ room, playSound }) {
 
   const [clue, setClue] = useState('')
   const [count, setCount] = useState(1)
+
+  useEffect(() => {
+    // start timer
+    let initial = 120
+    const timer = setInterval(async () => {
+      if (initial <= 0) {
+        // end round
+        clearTimeout(timer)
+        await firebase.ref('rooms').child(room.name).child('state').update({ timer: null })
+        const color = currentUser.team === 'blue' ? '🔵 ' : '🔴'
+        const currentTurn = room.state.turn
+        await firebase.ref('rooms').child(room.name).child('logs').push(`${color} ${currentUser.nickname} ran out of time ⏱️`)
+        // clear hints
+        for (const word of Object.keys(room.words)) {
+          await firebase.ref('rooms').child(room.name).child('words').child(word).update({ hints: null })
+        }
+        await firebase.ref('rooms').child(room.name).child('state').update({
+          clue: null,
+          count: null,
+          turn: currentTurn === 'red_spymaster' ? 'blue_spymaster' : 'red_spymaster'
+        })
+      } else {
+        await firebase.ref('rooms').child(room.name).child('state').update({ timer: initial })
+        initial -= 1
+      }
+    }, 1000)
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [])
 
   const onSendClue = async (e) => {
     e.preventDefault()
