@@ -37,6 +37,17 @@ export default function ClueInput ({ room, roomData, playSound }) {
     room.child('logs').push(`${color} ${currentUser.nickname} gives clue ${clue} - ${count}`)
   }
 
+  const onClueCountOpen = () => {
+    playSound()
+    onOpen()
+  }
+
+  const onClueCount = (count) => {
+    playSound()
+    setCount(count)
+    onClose()
+  }
+
   return (
     <InputGroup
       size='lg'
@@ -54,7 +65,7 @@ export default function ClueInput ({ room, roomData, playSound }) {
               colorScheme='yellow'
               fontSize='22px'
               fontWeight='bold'
-              onClick={onOpen}
+              onClick={onClueCountOpen}
             >
               {count}
             </Button>
@@ -72,7 +83,7 @@ export default function ClueInput ({ room, roomData, playSound }) {
                       key={idx + 1}
                       colorScheme={count === idx + 1 ? 'yellow' : 'gray'}
                       size='md'
-                      onClick={() => { setCount(idx + 1); onClose() }}
+                      onClick={() => onClueCount(idx + 1)}
                     >
                       {idx + 1}
                     </Button>

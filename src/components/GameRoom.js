@@ -23,7 +23,7 @@ import useSound from 'use-sound'
 import soundEffect from 'sounds/soundEffect.mp3'
 
 export default function GameRoom ({ room, roomData }) {
-  const [playSound] = useSound(soundEffect, { interrupt: true })
+  const [playSound] = useSound(soundEffect, { interrupt: true, volume: 0.4 })
 
   const isDesktop = useBreakpointValue({ xl: true })
 
