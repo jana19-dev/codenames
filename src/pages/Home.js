@@ -47,11 +47,13 @@ export default function Home () {
     const room = firebase.ref('rooms').child(name)
 
     room.set({ name, owner: visitorID, logs: [], state: { turn: 'generating_words' } })
-
-    const user = room.child('users').child(visitorID)
-    user.set({ visitorID, nickname })
       .then(() => {
-        window.location.href = `/rooms/${name}`
+        room.child('logs').push(`⚪  ${nickname} created the room 😎 `)
+        const user = room.child('users').child(visitorID)
+        user.set({ visitorID, nickname })
+          .then(() => {
+            window.location.href = `/rooms/${name}`
+          })
       })
   }
 
