@@ -87,6 +87,7 @@ export default function StatusText ({ room }) {
         fontWeight='bold'
         fontSize={['sm', 'lg', '2xl']}
         letterSpacing={['0.5px', '1px']}
+        textAlign='center'
       >
         {text}
       </Text>

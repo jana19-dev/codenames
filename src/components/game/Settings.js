@@ -109,8 +109,9 @@ export default function Settings ({ room }) {
 
   return (
     <>
-      <Button colorScheme='yellow' onClick={handleOpen} leftIcon={<FcSettings fontSize='26px' />}>
-        Settings
+      <Button colorScheme='yellow' onClick={handleOpen}>
+        <FcSettings fontSize='26px' />
+        <Text display={['none', 'inline-flex']} ml={2}>Settings</Text>
       </Button>
       <Drawer
         isOpen={isOpen}
@@ -121,7 +122,7 @@ export default function Settings ({ room }) {
         <DrawerOverlay>
           <DrawerContent>
             <DrawerCloseButton size='lg' />
-            <DrawerHeader>{room.name}</DrawerHeader>
+            <DrawerHeader>Room Settings</DrawerHeader>
             <DrawerBody>
               <VStack spacing={8}>
                 <FormControl textAlign='center'>

@@ -163,6 +163,7 @@ export default function Card ({ word, room, playSound }) {
       justifyContent='center'
       borderRadius='lg'
       minH={['60px', '120px']}
+      minW={['100%', '160px']}
       letterSpacing='1px'
       animate={cardControls}
       transition={{ duration: 1 }}

@@ -1,5 +1,4 @@
 import {
-  Box,
   Text,
   Grid,
   Link,
@@ -23,8 +22,8 @@ export default function GameRoom ({ room, playSound }) {
   const isDesktop = useBreakpointValue({ xl: true })
 
   return (
-    <Box height='100%' p={[2, 4]} overflow='hidden'>
-      <HStack justifyContent='space-between' alignItems='center' mb={2}>
+    <Grid height='100vh' p={[2, 4]} placeItems='center'>
+      <HStack justifyContent='space-between' alignItems='center' mb={2} width='100%'>
         <Link d='flex' alignItems='flex-end' href='/'>
           <Image ignoreFallback height='45px' src={logoSVG} alt='CODENAMES' />
           <Text
@@ -48,7 +47,9 @@ export default function GameRoom ({ room, playSound }) {
             <RedTeam room={room} playSound={playSound} />
             <BlueTeam room={room} playSound={playSound} />
           </VStack>
-          <Board room={room} playSound={playSound} />
+          <Grid justifyContent='center'>
+            <Board room={room} playSound={playSound} />
+          </Grid>
           <VStack spacing={8}>
             <GameLog room={room} playSound={playSound} />
             <GameChat room={room} playSound={playSound} />
@@ -68,18 +69,18 @@ export default function GameRoom ({ room, playSound }) {
           </Grid>
         </Grid>
       )}
-      <Grid mt={2}>
+      <Grid mt={2} justifySelf={['center', 'right']}>
         <Link
           py={2}
+          isExternal
           href='https://jana19.dev'
           fontWeight='bold'
           color='white'
-          textAlign={['center', 'right']}
           width='100%'
         >
           Developed by jana19.dev
         </Link>
       </Grid>
-    </Box>
+    </Grid>
   )
 }
