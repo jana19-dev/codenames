@@ -16,7 +16,7 @@ export default function GenerateWords ({ room }) {
   const [error, setError] = useState(false)
 
   const generateWords = () => {
-    firebase.ref('words').on('value', (snapshot) => {
+    firebase.ref('words').on('value', async (snapshot) => {
       const allWords = snapshot.val()
       const randomWords = shuffle(allWords).slice(0, 25)
       const doubleAgent = {
@@ -47,12 +47,10 @@ export default function GenerateWords ({ room }) {
       for (const word of shuffle([doubleAgent, ...blueAgents, ...redAgents, ...bystanders])) {
         words[word.label] = word
       }
-      firebase.ref('rooms').child(room.name).child('words').set(words)
-        .then(() => {
-          firebase.ref('rooms').child(room.name).child('state').set({
-            turn: 'red_spymaster'
-          })
-        })
+      await firebase.ref('rooms').child(room.name).child('words').set(words)
+      await firebase.ref('rooms').child(room.name).child('state').set({
+        turn: 'red_spymaster'
+      })
     }, setError)
   }
 

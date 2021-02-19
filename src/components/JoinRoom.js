@@ -14,21 +14,18 @@ import {
   ModalOverlay
 } from '@chakra-ui/react'
 
-export default function JoinRoom ({ room }) {
+export default function JoinRoom ({ room, playSound }) {
   const [isLoading, setIsLoading] = useState(false)
 
   const nicknameRef = useRef()
   const [nickname, setNickname] = useState('')
 
-  const onRoomJoin = (e) => {
+  const onRoomJoin = async (e) => {
     e.preventDefault()
-
+    await playSound()
     setIsLoading(true)
-
     const visitorID = window.localStorage.getItem('visitorID')
-
-    const user = firebase.ref('rooms').child(room.name).child('users').child(visitorID)
-    user.set({ visitorID, nickname })
+    firebase.ref('rooms').child(room.name).child('users').child(visitorID).set({ visitorID, nickname })
   }
 
   return (

@@ -19,12 +19,7 @@ import Board from 'components/game/Board'
 import GameLog from 'components/game/GameLog'
 import GameChat from 'components/game/GameChat'
 
-import useSound from 'use-sound'
-import soundEffect from 'sounds/soundEffect.mp3'
-
-export default function GameRoom ({ room }) {
-  const [playSound] = useSound(soundEffect, { interrupt: true, volume: 0.4 })
-
+export default function GameRoom ({ room, playSound }) {
   const isDesktop = useBreakpointValue({ xl: true })
 
   return (

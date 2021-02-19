@@ -26,34 +26,32 @@ export default function Board ({ room, playSound }) {
   const currentUser = room.users[visitorID]
   const roomOwner = room.users[room.owner]
 
-  const onEndGuess = () => {
-    playSound()
+  const onEndGuess = async () => {
+    const color = currentUser.team === 'blue' ? '🔵 ' : '🔴'
     const currentTurn = room.state.turn
-    firebase.ref('rooms').child(room.name).child('state').update({
+    await playSound()
+    await firebase.ref('rooms').child(room.name).child('logs').push(`${color} ${currentUser.nickname} clicks end guessing`)
+    await firebase.ref('rooms').child(room.name).child('state').update({
       clue: null,
       count: null,
       turn: currentTurn === 'red_operative' ? 'blue_spymaster' : 'red_spymaster'
     })
-    const color = currentUser.team === 'blue' ? '🔵 ' : '🔴'
-    firebase.ref('rooms').child(room.name).child('logs').push(`${color} ${currentUser.nickname} clicks end guessing`)
   }
 
-  const onResetTeams = () => {
-    playSound()
+  const onResetTeams = async () => {
+    await playSound()
     for (const visitorID of Object.keys(room.users)) {
-      const user = firebase.ref('rooms').child(room.name).child('users').child(visitorID)
-      user.update({ team: null, role: null })
+      await firebase.ref('rooms').child(room.name).child('users').child(visitorID).update({ team: null, role: null })
     }
   }
 
-  const onResetGame = () => {
-    playSound()
-    onResetTeams()
-    firebase.ref('rooms').child(room.name).child('state').set({
+  const onResetGame = async () => {
+    await playSound()
+    await onResetTeams()
+    await firebase.ref('rooms').child(room.name).child('logs').push(`⚪ ${roomOwner.nickname} has reset the game`)
+    await firebase.ref('rooms').child(room.name).child('state').set({
       turn: 'generating_words'
     })
-    firebase.ref('rooms').child(room.name).child('words').set(null)
-    firebase.ref('rooms').child(room.name).child('logs').push(`⚪ ${roomOwner.nickname} has reset the game`)
   }
 
   let showClueInput = false

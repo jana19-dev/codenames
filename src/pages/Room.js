@@ -8,7 +8,12 @@ import GameRoom from 'components/GameRoom'
 
 import firebase from 'utils/firebase'
 
+import useSound from 'use-sound'
+import soundEffect from 'sounds/soundEffect.mp3'
+
 export default function Room ({ name }) {
+  const [playSound] = useSound(soundEffect, { interrupt: true, volume: 0.4 })
+
   const visitorID = window.localStorage.getItem('visitorID')
 
   const [isLoading, setIsLoading] = useState(true)
@@ -32,7 +37,7 @@ export default function Room ({ name }) {
 
   const currentUser = room && room.users && room.users[visitorID]
 
-  if (!currentUser) return <JoinRoom room={room} />
+  if (!currentUser) return <JoinRoom room={room} playSound={playSound} />
 
-  return <GameRoom room={room} />
+  return <GameRoom room={room} playSound={playSound} />
 }

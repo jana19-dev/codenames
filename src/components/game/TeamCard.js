@@ -15,12 +15,13 @@ import {
 } from '@chakra-ui/react'
 
 const JoinTeam = ({ room, team, role, playSound }) => {
-  const onJoin = () => {
+  const onJoin = async () => {
     playSound()
     const visitorID = window.localStorage.getItem('visitorID')
-    const user = firebase.ref('rooms').child(room.name).child('users').child(visitorID)
-    user.child('team').set(team)
-    user.child('role').set(role)
+    await firebase.ref('rooms').child(room.name).child('users').child(visitorID).update({
+      team,
+      role
+    })
   }
 
   return (

@@ -42,71 +42,67 @@ export default function Settings ({ room }) {
 
   const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const handleOpen = () => {
-    play()
+  const handleOpen = async () => {
+    await play()
     onOpen()
   }
 
-  const handleOnCopy = () => {
-    play()
+  const handleOnCopy = async () => {
+    await play()
     onCopy()
   }
 
-  const onEditNickname = (nickname) => {
+  const onEditNickname = async (nickname) => {
     if (nickname) {
-      const user = firebase.ref('rooms').child(room.name).child('users').child(visitorID)
-      user.update({ nickname })
+      await firebase.ref('rooms').child(room.name).child('users').child(visitorID).update({ nickname })
     }
   }
 
-  const onBecomeSpectator = () => {
-    play()
-    const user = firebase.ref('rooms').child(room.name).child('users').child(visitorID)
-    user.update({ team: null, role: null })
+  const onBecomeSpectator = async () => {
+    await play()
+    await firebase.ref('rooms').child(room.name).child('users').child(visitorID).update({ team: null, role: null })
   }
 
-  const onResetWords = () => {
-    play()
-    firebase.ref('rooms').child(room.name).child('state').set({
+  const onResetWords = async () => {
+    await play()
+    await firebase.ref('rooms').child(room.name).child('logs').push(`⚪ ${roomOwner.nickname} has reset the words`)
+    await firebase.ref('rooms').child(room.name).child('state').set({
       turn: 'generating_words'
     })
-    firebase.ref('rooms').child(room.name).child('logs').push(`⚪ ${roomOwner.nickname} has reset the words`)
   }
 
-  const onResetTeams = () => {
-    play()
+  const onResetTeams = async () => {
+    await play()
+    await firebase.ref('rooms').child(room.name).child('logs').push(`⚪ ${roomOwner.nickname} has reset the teams`)
     for (const visitorID of Object.keys(room.users)) {
-      const user = firebase.ref('rooms').child(room.name).child('users').child(visitorID)
-      user.update({ team: null, role: null })
+      await firebase.ref('rooms').child(room.name).child('users').child(visitorID).update({ team: null, role: null })
     }
-    firebase.ref('rooms').child(room.name).child('logs').push(`⚪ ${roomOwner.nickname} has reset the teams`)
   }
 
-  const onResetGame = () => {
-    play()
-    onResetTeams()
-    firebase.ref('rooms').child(room.name).child('state').set({
+  const onResetGame = async () => {
+    await play()
+    await onResetTeams()
+    await firebase.ref('rooms').child(room.name).child('logs').push(`⚪ ${roomOwner.nickname} has reset the game`)
+    await firebase.ref('rooms').child(room.name).child('state').set({
       turn: 'generating_words'
     })
-    firebase.ref('rooms').child(room.name).child('words').set(null)
-    firebase.ref('rooms').child(room.name).child('logs').push(`⚪ ${roomOwner.nickname} has reset the game`)
   }
 
-  const onLeaveRoom = () => {
-    play()
+  const onLeaveRoom = async () => {
+    await play()
     if (currentUser.visitorID === roomOwner.visitorID) {
       // transfer room ownership before removing this user
       const nonOwners = Object.values(room.users).filter(user => user.visitorID !== roomOwner.visitorID)
       if (nonOwners.length > 0) {
         const newOwner = nonOwners[0]
-        firebase.ref('rooms').child(room.name).update({ owner: newOwner.visitorID })
-        firebase.ref('rooms').child(room.name).child('users').child(currentUser.visitorID).set(null)
+        await firebase.ref('rooms').child(room.name).update({ owner: newOwner.visitorID })
+        await firebase.ref('rooms').child(room.name).child('users').child(currentUser.visitorID).set(null)
       } else {
         // no users left: delete the room
-        firebase.ref('rooms').child(room.name).set(null)
+        await firebase.ref('rooms').child(room.name).set(null)
       }
     } else {
-      firebase.ref('rooms').child(room.name).child('users').child(currentUser.visitorID).set(null)
+      await firebase.ref('rooms').child(room.name).child('users').child(currentUser.visitorID).set(null)
     }
   }
 

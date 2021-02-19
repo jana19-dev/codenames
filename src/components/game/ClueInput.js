@@ -26,26 +26,26 @@ export default function ClueInput ({ room, playSound }) {
   const [clue, setClue] = useState('')
   const [count, setCount] = useState(1)
 
-  const onSendClue = (e) => {
-    playSound()
+  const onSendClue = async (e) => {
     e.preventDefault()
+    await playSound()
     const currentTurn = room.state.turn
-    firebase.ref('rooms').child(room.name).child('state').update({
+    const color = currentUser.team === 'blue' ? '🔵 ' : '🔴'
+    await firebase.ref('rooms').child(room.name).child('logs').push(`${color} ${currentUser.nickname} gives clue ${clue} - ${count}`)
+    await firebase.ref('rooms').child(room.name).child('state').update({
       clue,
       count,
       turn: currentTurn === 'red_spymaster' ? 'red_operative' : 'blue_operative'
     })
-    const color = currentUser.team === 'blue' ? '🔵 ' : '🔴'
-    firebase.ref('rooms').child(room.name).child('logs').push(`${color} ${currentUser.nickname} gives clue ${clue} - ${count}`)
   }
 
-  const onClueCountOpen = () => {
-    playSound()
+  const onClueCountOpen = async () => {
+    await playSound()
     onOpen()
   }
 
-  const onClueCount = (count) => {
-    playSound()
+  const onClueCount = async (count) => {
+    await playSound()
     setCount(count)
     onClose()
   }

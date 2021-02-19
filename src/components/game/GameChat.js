@@ -19,19 +19,17 @@ export default function GameChat ({ room, playSound }) {
 
   const [message, setMessage] = useState('')
 
-  const onSendMessage = (e) => {
-    playSound()
+  const onSendMessage = async (e) => {
     e.preventDefault()
-    firebase.ref('rooms').child(room.name).child('chat').push({
+    await playSound()
+    await firebase.ref('rooms').child(room.name).child('chat').push({
       nickname: currentUser.nickname,
       message
     })
-      .then(() => {
-        setMessage('')
-        if (messagesEndRef.current) {
-          messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight
-        }
-      })
+    setMessage('')
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight
+    }
   }
 
   return (

@@ -75,15 +75,15 @@ export default function Card ({ word, room, playSound }) {
     }
   }
 
-  const onHint = () => {
-    playSound()
+  const onHint = async () => {
+    await playSound()
     let hints = word.hints ? [...word.hints] : []
     if (hints.includes(currentUser.nickname)) {
       hints = hints.filter(hintedBy => hintedBy !== currentUser.nickname)
     } else {
       hints = [...hints, currentUser.nickname]
     }
-    firebase.ref('rooms').child(room.name).child('words').child(word.label).update({
+    await firebase.ref('rooms').child(room.name).child('words').child(word.label).update({
       hints
     })
   }
@@ -93,58 +93,56 @@ export default function Card ({ word, room, playSound }) {
     await cardControls.start({
       rotateY: 360
     })
-    firebase.ref('rooms').child(room.name).child('words').child(word.label).update({
+    await firebase.ref('rooms').child(room.name).child('words').child(word.label).update({
       guessed: true
     })
-      .then(() => {
-        if (currentUser.team !== word.agent) {
-          const color = currentUser.team === 'blue' ? '🔵 ' : '🔴'
-          firebase.ref('rooms').child(room.name).child('logs').push(`${color} ${currentUser.nickname} taps ${word.label} 😭 `)
-          const currentTurn = room.state.turn
-          if (word.agent === 'double') {
-            // game over
-            firebase.ref('rooms').child(room.name).child('state').update({
-              clue: null,
-              count: null,
-              turn: currentUser.team === 'red' ? 'blue_won' : 'red_won'
-            })
-            if (currentUser.team === 'red') {
-              firebase.ref('rooms').child(room.name).child('logs').push('⚪ Blue team wins! 😎 ')
-            } else {
-              firebase.ref('rooms').child(room.name).child('logs').push('⚪ Red team wins! 😎 ')
-            }
-          } else {
-            firebase.ref('rooms').child(room.name).child('state').update({
-              clue: null,
-              count: null,
-              turn: currentTurn === 'red_operative' ? 'blue_spymaster' : 'red_spymaster'
-            })
-          }
+    if (currentUser.team !== word.agent) {
+      const color = currentUser.team === 'blue' ? '🔵 ' : '🔴'
+      await firebase.ref('rooms').child(room.name).child('logs').push(`${color} ${currentUser.nickname} taps ${word.label} 😭 `)
+      const currentTurn = room.state.turn
+      if (word.agent === 'double') {
+        // game over
+        await firebase.ref('rooms').child(room.name).child('state').update({
+          clue: null,
+          count: null,
+          turn: currentUser.team === 'red' ? 'blue_won' : 'red_won'
+        })
+        if (currentUser.team === 'red') {
+          await firebase.ref('rooms').child(room.name).child('logs').push('⚪ Blue team wins! 😎 ')
         } else {
-          const color = currentUser.team === 'blue' ? '🔵 ' : '🔴'
-          firebase.ref('rooms').child(room.name).child('logs').push(`${color} ${currentUser.nickname} taps ${word.label} 😍`)
-          // check if either team has guessed all words
-          const remainingBlueCount = room.words && Object.values(room.words).filter(({ label, agent, guessed }) => agent === 'blue' && !guessed && label !== word.label).length
-          const remainingRedCount = room.words && Object.values(room.words).filter(({ label, agent, guessed }) => agent === 'red' && !guessed && label !== word.label).length
-          if (remainingBlueCount === 0) {
-            // blue won
-            firebase.ref('rooms').child(room.name).child('state').update({
-              clue: null,
-              count: null,
-              turn: 'blue_won'
-            })
-            firebase.ref('rooms').child(room.name).child('logs').push('⚪ Blue team wins! 😎 ')
-          } else if (remainingRedCount === 0) {
-            // red won
-            firebase.ref('rooms').child(room.name).child('state').update({
-              clue: null,
-              count: null,
-              turn: 'red_won'
-            })
-            firebase.ref('rooms').child(room.name).child('logs').push('⚪ Red team wins! 😎 ')
-          }
+          await firebase.ref('rooms').child(room.name).child('logs').push('⚪ Red team wins! 😎 ')
         }
-      })
+      } else {
+        await firebase.ref('rooms').child(room.name).child('state').update({
+          clue: null,
+          count: null,
+          turn: currentTurn === 'red_operative' ? 'blue_spymaster' : 'red_spymaster'
+        })
+      }
+    } else {
+      const color = currentUser.team === 'blue' ? '🔵 ' : '🔴'
+      await firebase.ref('rooms').child(room.name).child('logs').push(`${color} ${currentUser.nickname} taps ${word.label} 😍`)
+      // check if either team has guessed all words
+      const remainingBlueCount = room.words && Object.values(room.words).filter(({ label, agent, guessed }) => agent === 'blue' && !guessed && label !== word.label).length
+      const remainingRedCount = room.words && Object.values(room.words).filter(({ label, agent, guessed }) => agent === 'red' && !guessed && label !== word.label).length
+      if (remainingBlueCount === 0) {
+        // blue won
+        await firebase.ref('rooms').child(room.name).child('state').update({
+          clue: null,
+          count: null,
+          turn: 'blue_won'
+        })
+        await firebase.ref('rooms').child(room.name).child('logs').push('⚪ Blue team wins! 😎 ')
+      } else if (remainingRedCount === 0) {
+        // red won
+        await firebase.ref('rooms').child(room.name).child('state').update({
+          clue: null,
+          count: null,
+          turn: 'red_won'
+        })
+        await firebase.ref('rooms').child(room.name).child('logs').push('⚪ Red team wins! 😎 ')
+      }
+    }
   }
 
   return (

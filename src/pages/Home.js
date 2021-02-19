@@ -39,26 +39,16 @@ export default function Home () {
     window.history.replaceState(null, null, '/')
   }, [])
 
-  const onRoomCreate = (e) => {
+  const onRoomCreate = async (e) => {
     e.preventDefault()
-    play()
-
+    await play()
     setIsLoading(true)
-
     const name = generateSlug()
     const visitorID = window.localStorage.getItem('visitorID')
-
-    const room = firebase.ref('rooms').child(name)
-
-    room.set({ name, owner: visitorID, logs: [], state: { turn: 'generating_words' } })
-      .then(() => {
-        room.child('logs').push(`⚪  ${nickname} created the room 😎 `)
-        const user = room.child('users').child(visitorID)
-        user.set({ visitorID, nickname })
-          .then(() => {
-            window.location.href = `/rooms/${name}`
-          })
-      })
+    await firebase.ref('rooms').child(name).set({ name, owner: visitorID, logs: [], state: { turn: 'generating_words' } })
+    await firebase.ref('rooms').child(name).child('logs').push(`⚪  ${nickname} created the room 😎 `)
+    await firebase.ref('rooms').child(name).child('users').child(visitorID).set({ visitorID, nickname })
+    window.location.href = `/rooms/${name}`
   }
 
   return (
