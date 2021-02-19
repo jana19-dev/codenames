@@ -8,6 +8,7 @@ import {
   Portal,
   HStack,
   Popover,
+  useToast,
   InputGroup,
   PopoverBody,
   useDisclosure,
@@ -18,6 +19,8 @@ import {
 } from '@chakra-ui/react'
 
 export default function ClueInput ({ room, playSound }) {
+  const toast = useToast()
+
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const visitorID = window.localStorage.getItem('visitorID')
@@ -28,15 +31,33 @@ export default function ClueInput ({ room, playSound }) {
 
   const onSendClue = async (e) => {
     e.preventDefault()
+    toast.closeAll()
     await playSound()
-    const currentTurn = room.state.turn
-    const color = currentUser.team === 'blue' ? '🔵 ' : '🔴'
-    await firebase.ref('rooms').child(room.name).child('logs').push(`${color} ${currentUser.nickname} gives clue ${clue} 🤞 ${count}`)
-    await firebase.ref('rooms').child(room.name).child('state').update({
-      clue,
-      count,
-      turn: currentTurn === 'red_spymaster' ? 'red_operative' : 'blue_operative'
-    })
+    let isValidClue = true
+    for (const word of Object.keys(room.words)) {
+      if (word.includes(clue)) {
+        isValidClue = false
+        break
+      }
+    }
+    if (isValidClue) {
+      const currentTurn = room.state.turn
+      const color = currentUser.team === 'blue' ? '🔵 ' : '🔴'
+      await firebase.ref('rooms').child(room.name).child('logs').push(`${color} ${currentUser.nickname} gives clue ${clue} 🤞 ${count}`)
+      await firebase.ref('rooms').child(room.name).child('state').update({
+        clue,
+        count,
+        turn: currentTurn === 'red_spymaster' ? 'red_operative' : 'blue_operative'
+      })
+    } else {
+      toast({
+        title: 'Invalid clue',
+        description: 'The clue cannot contain any of the words.',
+        status: 'error',
+        duration: 9000,
+        isClosable: true
+      })
+    }
   }
 
   const onClueCountOpen = async () => {
