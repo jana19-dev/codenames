@@ -48,7 +48,7 @@ export default function GameRoom ({ room, roomData }) {
           pt={8}
           gap={4}
           templateColumns='0.8fr 3fr 1fr'
-          height='calc(100% - 45px)'
+          height='calc(100% - 70px)'
           overflow='auto'
         >
           <VStack spacing={8} justifyContent='space-around' maxH='775px'>
@@ -65,7 +65,7 @@ export default function GameRoom ({ room, roomData }) {
       {!isDesktop && (
         <Grid
           gap={4}
-          height='calc(100% - 65px)'
+          height='calc(100% - 80px)'
           overflow='auto'
           overflowX='hidden'
         >
@@ -80,6 +80,18 @@ export default function GameRoom ({ room, roomData }) {
           </Grid>
         </Grid>
       )}
+      <Grid>
+        <Link
+          href='https://jana19.dev'
+          fontWeight='bold'
+          color='white'
+          textAlign={['center', 'right']}
+          width='100%'
+          fontSize='sm'
+        >
+          developed by jana19.dev
+        </Link>
+      </Grid>
     </Box>
   )
 }
