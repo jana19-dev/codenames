@@ -18,7 +18,6 @@ export default function GameChat ({ room, playSound }) {
   const currentUser = room.users[visitorID]
 
   useEffect(() => {
-    console.log('here')
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight
     }
