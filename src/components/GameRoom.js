@@ -3,6 +3,7 @@ import { useRef, useState, useEffect } from 'react'
 import firebase from 'utils/firebase'
 
 import {
+  Flex,
   Text,
   Grid,
   Link,
@@ -138,8 +139,17 @@ export default function GameRoom ({ room, playSound }) {
           </Grid>
         </Grid>
       )}
-      <Grid mt={2} justifySelf={['center', 'right']}>
+      <Flex
+        mt={2}
+        width='100%'
+        justifyItems='space-between'
+        alignItems='center'
+      >
+        <Text color='white' width='100%'>
+          Version {require('../../package.json').version}
+        </Text>
         <Link
+          textAlign='right'
           py={2}
           isExternal
           href='https://jana19.dev'
@@ -149,7 +159,7 @@ export default function GameRoom ({ room, playSound }) {
         >
           Developed by jana19.dev
         </Link>
-      </Grid>
+      </Flex>
     </Grid>
   )
 }
