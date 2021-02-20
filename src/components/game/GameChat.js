@@ -18,10 +18,11 @@ export default function GameChat ({ room, playSound }) {
   const currentUser = room.users[visitorID]
 
   useEffect(() => {
+    console.log('here')
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight
     }
-  }, [room.chat.length])
+  }, [Object.keys(room.chat).length])
 
   const [message, setMessage] = useState('')
 

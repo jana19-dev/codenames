@@ -15,7 +15,7 @@ export default function GameLog ({ room, playSound }) {
     if (logsEndRef.current) {
       logsEndRef.current.scrollTop = logsEndRef.current.scrollHeight
     }
-  }, [isDesktop, room.logs.length])
+  }, [isDesktop, Object.keys(room.logs).length])
 
   return (
     <VStack
