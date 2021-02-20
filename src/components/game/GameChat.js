@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 import firebase from 'utils/firebase'
 
@@ -16,6 +16,12 @@ export default function GameChat ({ room, playSound }) {
 
   const visitorID = window.localStorage.getItem('visitorID')
   const currentUser = room.users[visitorID]
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight
+    }
+  }, [room])
 
   const [message, setMessage] = useState('')
 
@@ -72,7 +78,7 @@ export default function GameChat ({ room, playSound }) {
         <Input
           justifySelf='flex-end'
           value={message}
-          onChange={e => setMessage(e.target.value.slice(0, 40))}
+          onChange={e => setMessage(e.target.value.slice(0, 99))}
           borderColor='white'
         />
         <InputRightElement width='4rem' mr={1}>
