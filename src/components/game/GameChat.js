@@ -21,7 +21,7 @@ export default function GameChat ({ room, playSound }) {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight
     }
-  }, [room])
+  }, [room.chat.length])
 
   const [message, setMessage] = useState('')
 
