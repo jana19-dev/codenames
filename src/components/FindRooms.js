@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 
 import {
-  Flex,
+  Grid,
   Text,
   Modal,
   Image,
@@ -29,24 +29,19 @@ export default function FindRooms ({ onClose }) {
 
   useEffect(() => {
     firebase.ref('rooms').on('value', async (snapshot) => {
+      setIsLoading(true)
       const rooms = snapshot.val()
       setRooms(rooms)
       // delete rooms if no users are active
-      for (const room of Object.values(rooms)) {
-        const currentTime = new Date().getTime()
-        let activeUsersCount = Object.keys(room.users).length
-        for (const user of Object.values(room.users)) {
-          if (!user.lastActive || parseInt((currentTime - user.lastActive) / 1000) < 300) {
-            // user is inactive for 5mins - delete
-            activeUsersCount -= 1
+      if (rooms) {
+        for (const room of Object.values(rooms)) {
+          const currentTime = new Date().getTime()
+          if (parseInt((currentTime - room.ownerLastActive) / 1000) > 900) {
+            // if inactive for more than 15 mins
+            firebase.ref('rooms').child(room.name).set(null)
           }
         }
-        if (activeUsersCount === 0) {
-          // no users left: delete the room
-          await firebase.ref('rooms').child(room.name).set(null)
-        }
       }
-      setRooms(snapshot.val())
       setIsLoading(false)
     }, setError)
   }, [])
@@ -54,7 +49,7 @@ export default function FindRooms ({ onClose }) {
   if (error) return <Error error={error} />
 
   return (
-    <Modal isOpen isCentered onClose={onClose}>
+    <Modal isOpen isCentered onClose={onClose} size='lg'>
       <ModalOverlay />
       <ModalContent py={4}>
         <ModalCloseButton />
@@ -68,30 +63,47 @@ export default function FindRooms ({ onClose }) {
                 <CircularProgress isIndeterminate color='yellow.300' thickness='16px' />
               </>
             )}
-            {!isLoading && (
-              Object.values(rooms).map(room => (
-                <Flex
-                  key={room.name}
-                  justifyContent='space-between'
+            {!isLoading && !rooms && (
+              <Text>No active rooms available to join</Text>
+            )}
+            {!isLoading && rooms && (
+              <>
+                <Grid
+                  templateColumns='1fr 1fr 2fr'
+                  gap={2}
                   alignItems='center'
                   width='100%'
+                  fontSize='sm'
+                  fontWeight='bold'
                 >
-                  <Text>
-                    {new Date(1613793680248).toLocaleTimeString(room.ownerLastActive)}
-                  </Text>
-                  <Text
-                    fontWeight='bold'
+                  <Text>Last Active</Text>
+                  <Text>Users</Text>
+                  <Text textAlign='center'>Room</Text>
+                </Grid>
+                {Object.values(rooms).map(room => (
+                  <Grid
+                    key={room.name}
+                    templateColumns='1fr 1fr 2fr'
+                    gap={2}
+                    alignItems='center'
+                    width='100%'
                   >
-                    {Object.keys(room.users).length} users
-                  </Text>
-                  <Button
-                    colorScheme='yellow'
-                    onClick={() => { window.location.href = `/rooms/${room.name}` }}
-                  >
-                    {room.name}
-                  </Button>
-                </Flex>
-              ))
+                    <Text>
+                      {new Date(room.ownerLastActive).toLocaleTimeString()}
+                    </Text>
+                    <Text>
+                      {room.users && Object.keys(room.users).length} users
+                    </Text>
+                    <Button
+                      colorScheme='yellow'
+                      onClick={() => { window.location.href = `/rooms/${room.name}` }}
+                      size='sm'
+                    >
+                      {room.name}
+                    </Button>
+                  </Grid>
+                ))}
+              </>
             )}
           </VStack>
         </ModalBody>

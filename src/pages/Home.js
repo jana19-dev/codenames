@@ -46,7 +46,6 @@ export default function Home () {
     const name = generateSlug()
     const visitorID = window.localStorage.getItem('visitorID')
     await firebase.ref('rooms').child(name).set({ name, owner: visitorID, logs: [], state: { turn: 'generating_words' } })
-    await firebase.ref('rooms').child(name).child('logs').push(`👑  ${nickname} is the room owner 😎 `)
     await firebase.ref('rooms').child(name).child('users').child(visitorID).set({ visitorID, nickname })
     window.location.href = `/rooms/${name}`
   }

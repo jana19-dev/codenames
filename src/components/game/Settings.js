@@ -98,7 +98,6 @@ export default function Settings ({ room }) {
       if (nonOwners.length > 0) {
         const newOwner = nonOwners[0]
         await firebase.ref('rooms').child(room.name).update({ owner: newOwner.visitorID })
-        await firebase.ref('rooms').child(room.name).child('logs').push(`⚪ ${newOwner.nickname} is now the room owner`)
         await firebase.ref('rooms').child(room.name).child('users').child(currentUser.visitorID).set(null)
       } else {
         // no users left: delete the room

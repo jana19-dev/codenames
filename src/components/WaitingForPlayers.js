@@ -14,9 +14,6 @@ import waitingGIF from 'images/waiting.gif'
 export default function WaitingForPlayers ({ room }) {
   useEffect(() => {
     firebase.ref('rooms').child(room.name).child('state').update({ waiting: true })
-    return () => {
-      firebase.ref('rooms').child(room.name).child('state').update({ waiting: false })
-    }
   }, [])
 
   return (

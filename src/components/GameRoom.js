@@ -56,7 +56,7 @@ export default function GameRoom ({ room, playSound }) {
 
   useEffect(() => {
     if (roomOwnerVisitorID === visitorID) {
-      firebase.ref('rooms').child(room.name).child('logs').push(`👑 ${room.users[roomOwnerVisitorID].nickname} is now the room owner`)
+      firebase.ref('rooms').child(room.name).child('logs').push(`👑 ${room.users[roomOwnerVisitorID].nickname} is the room owner`)
     }
     const isActive = setInterval(() => {
       if (roomOwnerVisitorID === visitorID) {
@@ -84,6 +84,12 @@ export default function GameRoom ({ room, playSound }) {
       isActive && clearInterval(isActive)
     }
   }, [])
+
+  useEffect(() => {
+    if (!isRoomOwnerActive) {
+      firebase.ref('rooms').child(room.name).child('state').update({ waiting: false })
+    }
+  }, [isRoomOwnerActive])
 
   const canStartGame = isRoomOwnerActive && haveEnoughUsers(Object.values(room.users))
 
