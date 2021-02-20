@@ -1,10 +1,42 @@
+import { useEffect, useRef } from 'react'
+
+import firebase from 'utils/firebase'
+
 import {
   Flex,
   Text
 } from '@chakra-ui/react'
 
 export default function StatusText ({ room }) {
+  const timer = useRef()
+
   const visitorID = window.localStorage.getItem('visitorID')
+  const roomOwnerVisitorID = room.owner
+
+  useEffect(() => {
+    if (visitorID === roomOwnerVisitorID && !room.state.turn.includes('won')) {
+      timer.current = setInterval(async () => {
+        if (!room.state.waiting) {
+          if (room.state.timer >= 120) {
+            // end round
+            clearInterval(timer.current)
+            room.state.timer && await firebase.ref('rooms').child(room.name).child('state').update({ timer: null, timeout: true })
+          } else {
+            firebase.ref('rooms').child(room.name).child('state').update({ timer: room.state.timer + 1 })
+          }
+        }
+      }, 1000)
+      if (room.state.waiting) {
+        clearInterval(timer.current)
+      }
+    } else {
+      timer.current && clearInterval(timer.current)
+    }
+    return () => {
+      clearInterval(timer.current)
+    }
+  }, [room.state.timer, room.state.waiting])
+
   const currentUser = room.users[visitorID]
 
   let text = ''
@@ -91,7 +123,7 @@ export default function StatusText ({ room }) {
       >
         {text}
       </Text>
-      {room.state.timer && (
+      {Boolean(room.state.timer) && (
         <Text
           ml={2}
           px={1}
@@ -102,7 +134,7 @@ export default function StatusText ({ room }) {
           bgGradient='linear(to-r, red.800, red.900)'
           borderRadius='xl'
         >
-          {room.state.timer}s
+          {120 - room.state.timer}s
         </Text>
       )}
     </Flex>

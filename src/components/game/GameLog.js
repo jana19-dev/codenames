@@ -21,7 +21,7 @@ export default function GameLog ({ room, playSound }) {
     <VStack
       width='100%'
       height={['280px', '380px']}
-      w={['100%', '420px']}
+      w={['100%', '100%', '420px']}
       bgGradient='radial(rgba(0, 0, 0, 0.40), rgba(0, 0, 0, 0.75))'
       color='white'
       borderRadius='lg'

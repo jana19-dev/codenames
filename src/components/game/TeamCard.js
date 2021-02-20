@@ -18,6 +18,9 @@ const JoinTeam = ({ room, team, role, playSound }) => {
   const onJoin = async () => {
     playSound()
     const visitorID = window.localStorage.getItem('visitorID')
+    const currentUser = room.users[visitorID]
+    const color = team === 'blue' ? '🔵 ' : '🔴'
+    await firebase.ref('rooms').child(room.name).child('logs').push(`${color} ${currentUser.nickname} has joined as ${team} ${role}`)
     await firebase.ref('rooms').child(room.name).child('users').child(visitorID).update({
       team,
       role
@@ -51,6 +54,8 @@ export default function TeamCard (props) {
     spymasters = [],
     isCurrentUserJoined
   } = props
+
+  const currentTime = new Date().getTime()
 
   return (
     <VStack
@@ -86,9 +91,10 @@ export default function TeamCard (props) {
               key={user.visitorID}
               mx={2}
               fontSize={['xs', 'md']}
-              overflow='hidden'
+              color={parseInt((currentTime - user.lastActive) / 1000) < 10 ? 'white' : 'gray'}
             >
               {user.nickname}
+              <sup>{user.visitorID === room.owner ? '  👑' : ''}</sup>
             </Text>
           ))}
         </Wrap>
@@ -103,9 +109,10 @@ export default function TeamCard (props) {
               key={user.visitorID}
               mx={2}
               fontSize={['xs', 'md']}
-              overflow='hidden'
+              color={parseInt((currentTime - user.lastActive) / 1000) < 10 ? 'white' : 'gray'}
             >
               {user.nickname}
+              <sup>{user.visitorID === room.owner ? '  👑' : ''}</sup>
             </Text>
           ))}
         </Wrap>

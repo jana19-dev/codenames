@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+
 import {
   Grid,
   Button,
@@ -26,6 +28,92 @@ export default function Board ({ room, playSound }) {
   const currentUser = room.users[visitorID]
   const roomOwner = room.users[room.owner]
 
+  useEffect(() => {
+    (async () => {
+      if (room.state.timeout && visitorID === roomOwnerVisitorID) {
+        const resetState = { clue: null, count: null, timeout: null, timer: null }
+        clearHints()
+        if (room.state.turn === 'red_spymaster') {
+          const user = Object.values(room.users).find(user => user.team === 'red' && user.role === 'spymaster')
+          await firebase.ref('rooms').child(room.name).child('logs').push(`🔴  ${user.nickname} ran out of time to give a clue ⏱️`)
+          await firebase.ref('rooms').child(room.name).child('state').update({
+            ...resetState,
+            turn: 'blue_spymaster'
+          })
+        } else if (room.state.turn === 'blue_spymaster') {
+          const user = Object.values(room.users).find(user => user.team === 'blue' && user.role === 'spymaster')
+          await firebase.ref('rooms').child(room.name).child('logs').push(`🔵  ${user.nickname} ran out of time to give a clue ⏱️`)
+          await firebase.ref('rooms').child(room.name).child('state').update({
+            ...resetState,
+            turn: 'red_spymaster'
+          })
+        } else if (room.state.turn.includes('operative')) {
+          let remainingBlueCount = room.words && Object.values(room.words).filter(({ agent, guessed }) => agent === 'blue' && !guessed).length
+          let remainingRedCount = room.words && Object.values(room.words).filter(({ agent, guessed }) => agent === 'red' && !guessed).length
+          if (room.state.turn === 'red_operative') {
+            const user = Object.values(room.users).find(user => user.team === 'red' && user.role === 'operative')
+            await firebase.ref('rooms').child(room.name).child('logs').push(`🔴  ${user.nickname} ran out of time to guess ⏱️`)
+            // reveal one of the opposite agent
+            const remainingBlue = Object.values(room.words).filter(({ agent, guessed }) => agent === 'blue' && !guessed)
+            await firebase.ref('rooms').child(room.name).child('words').child(remainingBlue[0].label).update({
+              guessed: true
+            })
+            await firebase.ref('rooms').child(room.name).child('logs').push(`🤖  reveals blue agent ${remainingBlue[0].label} ⏱️`)
+            remainingBlueCount -= 1
+          } else {
+            const user = Object.values(room.users).find(user => user.team === 'blue' && user.role === 'operative')
+            await firebase.ref('rooms').child(room.name).child('logs').push(`🔵  ${user.nickname} ran out of time to guess ⏱️`)
+            // reveal one of the opposite agent
+            const remainingRed = Object.values(room.words).filter(({ agent, guessed }) => agent === 'red' && !guessed)
+            await firebase.ref('rooms').child(room.name).child('words').child(remainingRed[0].label).update({
+              guessed: true
+            })
+            await firebase.ref('rooms').child(room.name).child('logs').push(`🤖  reveals red agent ${remainingRed[0].label} ⏱️`)
+            remainingRedCount -= 1
+          }
+          // check if either team has guessed all words
+          if (remainingBlueCount === 0) {
+            // blue won
+            await firebase.ref('rooms').child(room.name).child('state').update({
+              clue: null,
+              count: null,
+              turn: 'blue_won'
+            })
+            await firebase.ref('rooms').child(room.name).child('logs').push('⚪ Blue team wins! 😎 ')
+          } else if (remainingRedCount === 0) {
+            // red won
+            await firebase.ref('rooms').child(room.name).child('state').update({
+              clue: null,
+              count: null,
+              turn: 'red_won'
+            })
+            await firebase.ref('rooms').child(room.name).child('logs').push('⚪ Red team wins! 😎 ')
+          } else {
+            await firebase.ref('rooms').child(room.name).child('state').update({
+              ...resetState,
+              turn: room.state.turn === 'red_operative' ? 'blue_spymaster' : 'red_spymaster'
+            })
+          }
+        }
+      }
+    })()
+  }, [room.state.timeout])
+
+  useEffect(() => {
+    (async () => {
+      if (!room.state.timer && !room.state.timeout) {
+        // const now = new Date().getTime()
+        await firebase.ref('rooms').child(room.name).child('state').update({ timer: 0, timeout: null, updating: null })
+      }
+    })()
+  }, [room.state.turn])
+
+  const clearHints = async () => {
+    for (const word of Object.keys(room.words)) {
+      await firebase.ref('rooms').child(room.name).child('words').child(word).update({ hints: null })
+    }
+  }
+
   const onEndGuess = async () => {
     const color = currentUser.team === 'blue' ? '🔵 ' : '🔴'
     const currentTurn = room.state.turn
@@ -38,6 +126,8 @@ export default function Board ({ room, playSound }) {
     await firebase.ref('rooms').child(room.name).child('state').update({
       clue: null,
       count: null,
+      timer: null,
+      timeout: null,
       turn: currentTurn === 'red_operative' ? 'blue_spymaster' : 'red_spymaster'
     })
   }
@@ -52,6 +142,10 @@ export default function Board ({ room, playSound }) {
   const onResetGame = async () => {
     await playSound()
     await onResetTeams()
+    firebase.ref('rooms').child(room.name).child('chat').push({
+      nickname: `👑  ${roomOwner.nickname}`,
+      message: 'resetting the game'
+    })
     await firebase.ref('rooms').child(room.name).child('logs').set(null)
     await firebase.ref('rooms').child(room.name).child('state').set({
       turn: 'generating_words'

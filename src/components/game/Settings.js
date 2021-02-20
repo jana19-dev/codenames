@@ -60,6 +60,7 @@ export default function Settings ({ room }) {
 
   const onBecomeSpectator = async () => {
     await play()
+    await firebase.ref('rooms').child(room.name).child('logs').push(`⚪ ${currentUser.nickname} has become a spectator`)
     await firebase.ref('rooms').child(room.name).child('users').child(visitorID).update({ team: null, role: null })
   }
 
@@ -90,12 +91,14 @@ export default function Settings ({ room }) {
 
   const onLeaveRoom = async () => {
     await play()
+    await firebase.ref('rooms').child(room.name).child('logs').push(`⚪ ${currentUser.nickname} has left the room`)
     if (currentUser.visitorID === roomOwner.visitorID) {
       // transfer room ownership before removing this user
       const nonOwners = Object.values(room.users).filter(user => user.visitorID !== roomOwner.visitorID)
       if (nonOwners.length > 0) {
         const newOwner = nonOwners[0]
         await firebase.ref('rooms').child(room.name).update({ owner: newOwner.visitorID })
+        await firebase.ref('rooms').child(room.name).child('logs').push(`⚪ ${newOwner.nickname} is now the room owner`)
         await firebase.ref('rooms').child(room.name).child('users').child(currentUser.visitorID).set(null)
       } else {
         // no users left: delete the room

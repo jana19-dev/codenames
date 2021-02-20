@@ -42,7 +42,7 @@ export default function GameChat ({ room, playSound }) {
       borderRadius='lg'
       overflowX='hidden'
     >
-      <Text fontWeight='bold' mt={2}>Game Chat</Text>
+      <Text fontWeight='bold' mt={2}>Room Chat</Text>
       {room.chat && (
         <VStack
           spacing={1}

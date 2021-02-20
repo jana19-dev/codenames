@@ -63,7 +63,7 @@ export default function Card ({ word, room, playSound }) {
     color = 'white'
     bgGradient = 'radial(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.55))'
   }
-  if (room.state.turn.includes('operative') && currentUser.role === 'operative') {
+  if (room.state.turn.includes('operative') && currentUser.role === 'operative' && canGuess) {
     alignItems = 'flex-start'
   }
   if (word.guessed && !room.state.turn.includes('won')) {
@@ -101,6 +101,7 @@ export default function Card ({ word, room, playSound }) {
     await firebase.ref('rooms').child(room.name).child('words').child(word.label).update({
       guessed: true
     })
+    const resetState = { clue: null, count: null, timeout: null, timer: null }
     if (currentUser.team !== word.agent) {
       const color = currentUser.team === 'blue' ? '🔵 ' : '🔴'
       await firebase.ref('rooms').child(room.name).child('logs').push(`${color} ${currentUser.nickname} taps ${word.label} 😭 `)
@@ -108,8 +109,7 @@ export default function Card ({ word, room, playSound }) {
       if (word.agent === 'double') {
         // game over
         await firebase.ref('rooms').child(room.name).child('state').update({
-          clue: null,
-          count: null,
+          ...resetState,
           turn: currentUser.team === 'red' ? 'blue_won' : 'red_won'
         })
         if (currentUser.team === 'red') {
@@ -123,8 +123,7 @@ export default function Card ({ word, room, playSound }) {
           await firebase.ref('rooms').child(room.name).child('words').child(word).update({ hints: null })
         }
         await firebase.ref('rooms').child(room.name).child('state').update({
-          clue: null,
-          count: null,
+          ...resetState,
           turn: currentTurn === 'red_operative' ? 'blue_spymaster' : 'red_spymaster'
         })
       }
@@ -137,16 +136,14 @@ export default function Card ({ word, room, playSound }) {
       if (remainingBlueCount === 0) {
         // blue won
         await firebase.ref('rooms').child(room.name).child('state').update({
-          clue: null,
-          count: null,
+          ...resetState,
           turn: 'blue_won'
         })
         await firebase.ref('rooms').child(room.name).child('logs').push('⚪ Blue team wins! 😎 ')
       } else if (remainingRedCount === 0) {
         // red won
         await firebase.ref('rooms').child(room.name).child('state').update({
-          clue: null,
-          count: null,
+          ...resetState,
           turn: 'red_won'
         })
         await firebase.ref('rooms').child(room.name).child('logs').push('⚪ Red team wins! 😎 ')
@@ -163,16 +160,20 @@ export default function Card ({ word, room, playSound }) {
       justifyContent='center'
       borderRadius='lg'
       minH={['60px', '120px']}
-      minW={['100%', '160px']}
+      minW={['100%', '100%', '100%', '160px']}
       letterSpacing='1px'
       animate={cardControls}
       transition={{ duration: 1 }}
       p={1}
       {...cardBackground}
     >
-      <VStack justifyContent={(canGuess || room.state.turn.includes('won') || word.guessed) ? 'flex-end' : 'center'} width='100%'>
+      <VStack
+        justifyContent={(room.state.turn.includes('won') || word.guessed) ? 'flex-end' : canGuess ? 'flex-start' : 'center'}
+        width='100%'
+        height='100%'
+      >
         {canGuess && (
-          <Flex justifyContent='space-between' width='100%'>
+          <Flex justifyContent='space-between' width='100%' alignSelf='flex-start'>
             <IconButton
               size={isDesktop ? 'md' : 'xs'}
               colorScheme={word.hints && word.hints.includes(currentUser.nickname) ? 'yellow' : 'white'}
@@ -206,7 +207,7 @@ export default function Card ({ word, room, playSound }) {
               <Badge
                 key={hintedBy}
                 colorScheme={currentUser.team === 'blue' ? 'blue' : currentUser.team === 'red' ? 'red' : 'gray'}
-                fontSize={['8px', 'sm']}
+                fontSize={['8px', 'xs']}
               >
                 {hintedBy}
               </Badge>
