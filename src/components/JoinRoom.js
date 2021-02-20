@@ -32,9 +32,9 @@ export default function JoinRoom ({ room, playSound }) {
     <Modal initialFocusRef={nicknameRef} isOpen isCentered>
       <ModalOverlay />
       <ModalContent pb={4}>
-        <ModalHeader fontSize='2xl' textAlign='center'>Welcome to Code Names</ModalHeader>
+        <ModalHeader fontSize='2xl' textAlign='center'>Joining Room</ModalHeader>
         <ModalBody>
-          <VStack spacing={8} as='form' onSubmit={onRoomJoin}>
+          <VStack spacing={4} as='form' onSubmit={onRoomJoin}>
             <Text fontWeight='bold'>{room.name}</Text>
             <Text>To enter the room, choose a nickname</Text>
             <Input
@@ -52,6 +52,14 @@ export default function JoinRoom ({ room, playSound }) {
               size='lg'
             >
               Join Room
+            </Button>
+            <Text>OR</Text>
+            <Button
+              colorScheme='yellow'
+              size='lg'
+              onClick={() => { window.location.href = '/' }}
+            >
+              Go Back Home
             </Button>
           </VStack>
         </ModalBody>
