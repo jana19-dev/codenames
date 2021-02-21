@@ -3,29 +3,34 @@
   "name": "Codenames Game",
   "icons": [
     {
-      "src": "logo-192x192.png",
-      "size": "192x192",
+      "src": "logo-144x144.png",
+      "sizes": "144x144",
       "type": "image/png"
     },
     {
       "src": "logo-192x192.png",
-      "size": "192x192",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "logo-192x192.png",
+      "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
       "src": "logo-256x256.png",
-      "size": "256x256",
+      "sizes": "256x256",
       "type": "image/png"
     },
     {
-      "src": "/logo-384x384.png",
-      "size": "384x384",
+      "src": "logo-384x384.png",
+      "sizes": "384x384",
       "type": "image/png"
     },
     {
       "src": "logo-512x512.png",
-      "size": "512x512",
+      "sizes": "512x512",
       "type": "image/png"
     }
   ],

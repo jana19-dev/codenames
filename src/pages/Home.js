@@ -61,9 +61,9 @@ export default function Home () {
           <ModalBody>
             {isFindingRooms && <FindRooms onClose={() => setIsFindingRooms(false)} />}
             <VStack spacing={4} as='form' onSubmit={onRoomCreate}>
-              <Image ignoreFallback height='65px' src={logoSVG} alt='CODENAMES' />
-              <FormControl>
-                <FormLabel>To create a new room, choose a nickname</FormLabel>
+              <Image ignoreFallback height='65px' width='65px' src={logoSVG} alt='CODENAMES' />
+              <FormControl textAlign='center'>
+                <FormLabel textAlign='center'>To create a new room, choose a nickname</FormLabel>
                 <Input
                   required
                   ref={nicknameRef}
