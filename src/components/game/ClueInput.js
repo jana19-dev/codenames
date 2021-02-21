@@ -5,7 +5,6 @@ import firebase from 'utils/firebase'
 import {
   Input,
   Button,
-  Portal,
   HStack,
   Popover,
   useToast,
@@ -95,28 +94,26 @@ export default function ClueInput ({ room, playSound }) {
               {count}
             </Button>
           </PopoverTrigger>
-          <Portal>
-            <PopoverContent
-              width={['100vw', '400px']}
-              bgGradient='radial(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.75))'
-              border='none'
-            >
-              <PopoverBody>
-                <HStack>
-                  {Array.from(new Array(8).keys()).map(idx => (
-                    <Button
-                      key={idx + 1}
-                      colorScheme={count === idx + 1 ? 'yellow' : 'gray'}
-                      size='md'
-                      onClick={() => onClueCount(idx + 1)}
-                    >
-                      {idx + 1}
-                    </Button>
-                  ))}
-                </HStack>
-              </PopoverBody>
-            </PopoverContent>
-          </Portal>
+          <PopoverContent
+            width={['100vw', '400px']}
+            bgGradient='radial(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.75))'
+            border='none'
+          >
+            <PopoverBody>
+              <HStack>
+                {Array.from(new Array(8).keys()).map(idx => (
+                  <Button
+                    key={idx + 1}
+                    colorScheme={count === idx + 1 ? 'yellow' : 'gray'}
+                    size='md'
+                    onClick={() => onClueCount(idx + 1)}
+                  >
+                    {idx + 1}
+                  </Button>
+                ))}
+              </HStack>
+            </PopoverBody>
+          </PopoverContent>
         </Popover>
       </InputLeftElement>
       <Input

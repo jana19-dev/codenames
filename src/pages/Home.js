@@ -11,7 +11,9 @@ import {
   Image,
   VStack,
   Button,
+  FormLabel,
   ModalBody,
+  FormControl,
   ModalHeader,
   ModalContent,
   ModalOverlay
@@ -60,15 +62,17 @@ export default function Home () {
             {isFindingRooms && <FindRooms onClose={() => setIsFindingRooms(false)} />}
             <VStack spacing={4} as='form' onSubmit={onRoomCreate}>
               <Image ignoreFallback height='65px' src={logoSVG} alt='CODENAMES' />
-              <Text>To create a new room, choose a nickname</Text>
-              <Input
-                required
-                ref={nicknameRef}
-                value={nickname}
-                onChange={e => setNickname(e.target.value.trim())}
-                placeholder='Enter your nickname'
-                maxW='250px'
-              />
+              <FormControl>
+                <FormLabel>To create a new room, choose a nickname</FormLabel>
+                <Input
+                  required
+                  ref={nicknameRef}
+                  value={nickname}
+                  onChange={e => setNickname(e.target.value.trim())}
+                  placeholder='Enter your nickname'
+                  maxW='250px'
+                />
+              </FormControl>
               <Button
                 type='submit'
                 colorScheme='yellow'
