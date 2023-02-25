@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-import firebase from 'utils/firebase'
+import database from 'utils/firebase'
 
 import {
   Text,
@@ -13,7 +13,10 @@ import waitingGIF from 'images/waiting.gif'
 
 export default function WaitingForPlayers ({ room }) {
   useEffect(() => {
-    firebase.ref('rooms').child(room.name).child('state').update({ waiting: true })
+    database().ref(`rooms/${room.name}/state`).set('WAITING_FOR_PLAYERS')
+    return () => {
+      database().ref(`rooms/${room.name}/state`).set('PLAYING')
+    }
   }, [])
 
   return (

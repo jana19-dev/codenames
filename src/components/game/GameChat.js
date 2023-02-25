@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 
-import firebase from 'utils/firebase'
+import database from 'utils/firebase'
 
 import {
   Text,
@@ -28,7 +28,7 @@ export default function GameChat ({ room, playSound }) {
   const onSendMessage = async (e) => {
     e.preventDefault()
     await playSound()
-    await firebase.ref('rooms').child(room.name).child('chat').push({
+    await database().ref('rooms').child(room.name).child('chat').push({
       nickname: currentUser.nickname,
       message
     })

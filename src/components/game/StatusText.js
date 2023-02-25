@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 
-import firebase from 'utils/firebase'
+import database from 'utils/firebase'
 
 import {
   Flex,
@@ -14,15 +14,15 @@ export default function StatusText ({ room }) {
   const roomOwnerVisitorID = room.owner
 
   useEffect(() => {
-    if (visitorID === roomOwnerVisitorID && !room.state.turn.includes('won')) {
+    if (visitorID === roomOwnerVisitorID && !room.game.turn.includes('won')) {
       timer.current = setInterval(async () => {
         if (!room.state.waiting) {
           if (room.state.timer >= 120) {
             // end round
             clearInterval(timer.current)
-            room.state.timer && await firebase.ref('rooms').child(room.name).child('state').update({ timer: null, timeout: true })
+            room.state.timer && await database().ref('rooms').child(room.name).child('state').update({ timer: null, timeout: true })
           } else {
-            firebase.ref('rooms').child(room.name).child('state').update({ timer: room.state.timer + 1 })
+            database().ref('rooms').child(room.name).child('state').update({ timer: room.state.timer + 1 })
           }
         }
       }, 1000)
@@ -40,7 +40,7 @@ export default function StatusText ({ room }) {
   const currentUser = room.users[visitorID]
 
   let text = ''
-  if (room.state.turn === 'red_spymaster') {
+  if (room.game.turn === 'red_spymaster') {
     if (currentUser.team === 'red') {
       if (currentUser.role === 'spymaster') {
         text = 'Give your operatives a clue'
@@ -54,7 +54,7 @@ export default function StatusText ({ room }) {
     } else {
       text = 'Waiting for RED spymaster to give a clue'
     }
-  } else if (room.state.turn === 'blue_spymaster') {
+  } else if (room.game.turn === 'blue_spymaster') {
     if (currentUser.team === 'blue') {
       if (currentUser.role === 'spymaster') {
         text = 'Give your operatives a clue'
@@ -68,7 +68,7 @@ export default function StatusText ({ room }) {
     } else {
       text = 'Waiting for BLUE spymasters to give a clue'
     }
-  } else if (room.state.turn === 'red_operative') {
+  } else if (room.game.turn === 'red_operative') {
     if (currentUser.team === 'red') {
       if (currentUser.role === 'spymaster') {
         text = 'Waiting for your operatives to guess words'
@@ -82,7 +82,7 @@ export default function StatusText ({ room }) {
     } else {
       text = 'Waiting for RED operatives to guess words'
     }
-  } else if (room.state.turn === 'blue_operative') {
+  } else if (room.game.turn === 'blue_operative') {
     if (currentUser.team === 'blue') {
       if (currentUser.role === 'spymaster') {
         text = 'Waiting for your operatives to guess words'
@@ -96,8 +96,8 @@ export default function StatusText ({ room }) {
     } else {
       text = 'Waiting for RED operatives to guess words'
     }
-  } else if (room.state.turn.includes('won')) {
-    if (room.state.turn === 'red_won') {
+  } else if (room.game.turn.includes('won')) {
+    if (room.game.turn === 'red_won') {
       text = 'Red team wins! 😎'
     } else {
       text = 'Blue team wins! 😎'

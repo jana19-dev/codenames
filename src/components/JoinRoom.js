@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 
-import firebase from 'utils/firebase'
+import database from 'utils/firebase'
 
 import {
   Text,
@@ -25,7 +25,7 @@ export default function JoinRoom ({ room, playSound }) {
     await playSound()
     setIsLoading(true)
     const visitorID = window.localStorage.getItem('visitorID')
-    firebase.ref('rooms').child(room.name).child('users').child(visitorID).set({ visitorID, nickname })
+    database().ref(`rooms/${room.name}/users/${visitorID}`).update({ visitorID, nickname })
   }
 
   return (

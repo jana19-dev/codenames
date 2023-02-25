@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import firebase from 'utils/firebase'
+import database from 'utils/firebase'
 
 import {
   Input,
@@ -40,10 +40,10 @@ export default function ClueInput ({ room, playSound }) {
       }
     }
     if (isValidClue) {
-      const currentTurn = room.state.turn
+      const currentTurn = room.game.turn
       const color = currentUser.team === 'blue' ? '🔵 ' : '🔴'
-      await firebase.ref('rooms').child(room.name).child('logs').push(`${color} ${currentUser.nickname} gives clue ${clue} 🤞 ${count}`)
-      await firebase.ref('rooms').child(room.name).child('state').update({
+      await database().ref('rooms').child(room.name).child('logs').push(`${color} ${currentUser.nickname} gives clue ${clue} 🤞 ${count}`)
+      await database().ref('rooms').child(room.name).child('state').update({
         clue,
         count,
         timer: null,

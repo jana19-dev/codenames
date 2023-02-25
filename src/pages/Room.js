@@ -6,7 +6,7 @@ import RoomNotFound from 'components/RoomNotFound'
 import JoinRoom from 'components/JoinRoom'
 import GameRoom from 'components/GameRoom'
 
-import firebase from 'utils/firebase'
+import database from 'utils/firebase'
 
 import useSound from 'use-sound'
 import soundEffect from 'sounds/soundEffect.mp3'
@@ -22,8 +22,8 @@ export default function Room ({ name }) {
   const [room, setRoom] = useState({})
 
   useEffect(() => {
-    // find the room and check if the current user is joined
-    firebase.ref('rooms').child(name).on('value', (snapshot) => {
+    // find the room
+    database().ref(`rooms/${name}`).on('value', (snapshot) => {
       setRoom(snapshot.val())
       setIsLoading(false)
     }, setError)
@@ -35,9 +35,9 @@ export default function Room ({ name }) {
 
   if (!room) return <RoomNotFound name={name} />
 
+  // check if the current user is in the room
   const currentUser = room && room.users && room.users[visitorID]
-
-  if (!currentUser) return <JoinRoom room={room} playSound={playSound} />
+  if (!currentUser || !currentUser.nickname) return <JoinRoom room={room} playSound={playSound} />
 
   return <GameRoom room={room} playSound={playSound} />
 }

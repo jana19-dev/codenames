@@ -19,7 +19,7 @@ import logoSVG from 'images/logo.svg'
 
 import Error from 'components/Error'
 
-import firebase from 'utils/firebase'
+import database from 'utils/firebase'
 
 export default function FindRooms ({ onClose }) {
   const [isLoading, setIsLoading] = useState(true)
@@ -28,7 +28,7 @@ export default function FindRooms ({ onClose }) {
   const [rooms, setRooms] = useState([])
 
   useEffect(() => {
-    firebase.ref('rooms').on('value', async (snapshot) => {
+    database().ref('rooms').on('value', async (snapshot) => {
       setIsLoading(true)
       const rooms = snapshot.val()
       setRooms(rooms)
@@ -36,9 +36,9 @@ export default function FindRooms ({ onClose }) {
       if (rooms) {
         for (const room of Object.values(rooms)) {
           const currentTime = new Date().getTime()
-          if (parseInt((currentTime - room.ownerLastActive) / 1000) > 900) {
+          if (parseInt((currentTime - room.lastOnline) / 1000) > 900) {
             // if inactive for more than 15 mins
-            firebase.ref('rooms').child(room.name).set(null)
+            database().ref('rooms').child(room.name).set(null)
           }
         }
       }
@@ -89,7 +89,7 @@ export default function FindRooms ({ onClose }) {
                     width='100%'
                   >
                     <Text>
-                      {new Date(room.ownerLastActive).toLocaleTimeString()}
+                      {room.lastOnline ? new Date(room.lastOnline).toLocaleTimeString() : 'now'}
                     </Text>
                     <Text>
                       {room.users && Object.keys(room.users).length} users

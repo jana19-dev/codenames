@@ -1,6 +1,6 @@
 import { startCase } from 'lodash'
 
-import firebase from 'utils/firebase'
+import database from 'utils/firebase'
 
 import {
   Text,
@@ -20,8 +20,8 @@ const JoinTeam = ({ room, team, role, playSound }) => {
     const visitorID = window.localStorage.getItem('visitorID')
     const currentUser = room.users[visitorID]
     const color = team === 'blue' ? '🔵 ' : '🔴'
-    await firebase.ref('rooms').child(room.name).child('logs').push(`${color} ${currentUser.nickname} has joined as ${team} ${role}`)
-    await firebase.ref('rooms').child(room.name).child('users').child(visitorID).update({
+    await database().ref('rooms').child(room.name).child('logs').push(`${color} ${currentUser.nickname} has joined as ${team} ${role}`)
+    await database().ref('rooms').child(room.name).child('users').child(visitorID).update({
       team,
       role
     })

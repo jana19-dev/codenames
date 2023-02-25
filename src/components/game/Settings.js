@@ -26,7 +26,7 @@ import EditNickname from 'components/game/EditNickname'
 import useSound from 'use-sound'
 import soundEffect from 'sounds/soundEffect.mp3'
 
-import firebase from 'utils/firebase'
+import database from 'utils/firebase'
 
 export default function Settings ({ room }) {
   const [play] = useSound(soundEffect)
@@ -54,57 +54,48 @@ export default function Settings ({ room }) {
 
   const onEditNickname = async (nickname) => {
     if (nickname) {
-      await firebase.ref('rooms').child(room.name).child('users').child(visitorID).update({ nickname })
+      await database().ref('rooms').child(room.name).child('users').child(visitorID).update({ nickname })
     }
   }
 
   const onBecomeSpectator = async () => {
     await play()
-    await firebase.ref('rooms').child(room.name).child('logs').push(`⚪ ${currentUser.nickname} has become a spectator`)
-    await firebase.ref('rooms').child(room.name).child('users').child(visitorID).update({ team: null, role: null })
+    await database().ref('rooms').child(room.name).child('logs').push(`⚪ ${currentUser.nickname} has become a spectator`)
+    await database().ref('rooms').child(room.name).child('users').child(visitorID).update({ team: null, role: null })
   }
 
   const onResetWords = async () => {
     await play()
-    await firebase.ref('rooms').child(room.name).child('logs').push(`⚪ ${roomOwner.nickname} has reset the words`)
-    await firebase.ref('rooms').child(room.name).child('state').set({
+    await database().ref('rooms').child(room.name).child('logs').push(`⚪ ${roomOwner.nickname} has reset the words`)
+    await database().ref('rooms').child(room.name).child('state').set({
       turn: 'generating_words'
     })
   }
 
   const onResetTeams = async () => {
     await play()
-    await firebase.ref('rooms').child(room.name).child('logs').push(`⚪ ${roomOwner.nickname} has reset the teams`)
+    await database().ref('rooms').child(room.name).child('logs').push(`⚪ ${roomOwner.nickname} has reset the teams`)
     for (const visitorID of Object.keys(room.users)) {
-      await firebase.ref('rooms').child(room.name).child('users').child(visitorID).update({ team: null, role: null })
+      await database().ref('rooms').child(room.name).child('users').child(visitorID).update({ team: null, role: null })
     }
   }
 
   const onResetGame = async () => {
     await play()
     await onResetTeams()
-    // await firebase.ref('rooms').child(room.name).child('logs').set(null)
-    await firebase.ref('rooms').child(room.name).child('state').set({
+    // await database().ref('rooms').child(room.name).child('logs').set(null)
+    await database().ref('rooms').child(room.name).child('state').set({
       turn: 'generating_words'
     })
   }
 
   const onLeaveRoom = async () => {
     await play()
-    await firebase.ref('rooms').child(room.name).child('logs').push(`⚪ ${currentUser.nickname} has left the room`)
+    await database().ref('rooms').child(room.name).child('logs').push(`⚪ ${currentUser.nickname} has left the room`)
     if (currentUser.visitorID === roomOwner.visitorID) {
-      // transfer room ownership before removing this user
-      const nonOwners = Object.values(room.users).filter(user => user.visitorID !== roomOwner.visitorID)
-      if (nonOwners.length > 0) {
-        const newOwner = nonOwners[0]
-        await firebase.ref('rooms').child(room.name).update({ owner: newOwner.visitorID })
-        await firebase.ref('rooms').child(room.name).child('users').child(currentUser.visitorID).set(null)
-      } else {
-        // no users left: delete the room
-        await firebase.ref('rooms').child(room.name).set(null)
-      }
+      await database().ref(`rooms/${room.name}`).update({ lastOnline: database.ServerValue.TIMESTAMP })
     } else {
-      await firebase.ref('rooms').child(room.name).child('users').child(currentUser.visitorID).set(null)
+      await database().ref(`rooms/${room.name}/users/${currentUser.visitorID}`).update({ lastOnline: database.ServerValue.TIMESTAMP })
     }
     window.location.href = '/'
   }

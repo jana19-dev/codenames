@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-import firebase from 'utils/firebase'
+import database from 'utils/firebase'
 
 import {
   Text,
@@ -16,15 +16,18 @@ import {
 export default function RoomOwnerInactive ({ room }) {
   useEffect(() => {
     const timeout = setTimeout(() => {
-      // choose a random user - not the current room owner
-      const currentTime = new Date().getTime()
+      // choose a random online user - except the current room owner
       const newOwner = Object.values(room.users).find(user => {
-        return user.visitorID !== room.owner && parseInt((currentTime - user.lastActive) / 1000) < 10
+        return user.visitorID !== room.owner && !user.lastOnline
       })
       if (newOwner) {
-        firebase.ref('rooms').child(room.name).update({ owner: newOwner.visitorID })
+        database().ref(`rooms/${room.name}`).update({
+          owner: newOwner.visitorID,
+          lastOnline: null,
+          state: 'PLAYING'
+        })
       }
-    }, 5000)
+    }, 3000)
     return () => {
       clearTimeout(timeout)
     }
@@ -34,7 +37,7 @@ export default function RoomOwnerInactive ({ room }) {
     <Modal isOpen isCentered size='xs'>
       <ModalOverlay />
       <ModalContent pb={4}>
-        <ModalHeader fontSize='2xl' textAlign='center'>Room owner has been disconnected</ModalHeader>
+        <ModalHeader fontSize='2xl' textAlign='center'>Room owner disconnected</ModalHeader>
         <ModalBody>
           <VStack>
             <Text textAlign='center'>

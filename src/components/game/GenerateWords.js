@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-import firebase from 'utils/firebase'
+import database from 'utils/firebase'
 
 import {
   Text,
@@ -16,7 +16,7 @@ export default function GenerateWords ({ room }) {
   const [error, setError] = useState(false)
 
   const generateWords = () => {
-    firebase.ref('words').on('value', async (snapshot) => {
+    database().ref('words').on('value', async (snapshot) => {
       const allWords = snapshot.val()
       const randomWords = shuffle(allWords).slice(0, 25)
       const doubleAgent = {
@@ -47,10 +47,7 @@ export default function GenerateWords ({ room }) {
       for (const word of shuffle([doubleAgent, ...blueAgents, ...redAgents, ...bystanders])) {
         words[word.label] = word
       }
-      await firebase.ref('rooms').child(room.name).child('words').set(words)
-      await firebase.ref('rooms').child(room.name).child('state').set({
-        turn: 'red_spymaster'
-      })
+      await database().ref(`rooms/${room.name}/words`).update({ words, state: 'PLAYING' })
     }, setError)
   }
 

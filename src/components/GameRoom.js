@@ -1,6 +1,9 @@
-import { useRef, useState, useEffect } from 'react'
+import { useEffect } from 'react'
 
-import firebase from 'utils/firebase'
+import database from 'utils/firebase'
+
+import useRoomLogs from 'hooks/useRoomLogs'
+import useUserDisconnect from 'hooks/useUserDisconnect'
 
 import {
   Flex,
@@ -46,50 +49,41 @@ const haveEnoughUsers = (users) => {
 }
 
 export default function GameRoom ({ room, playSound }) {
+  useUserDisconnect(room)
+
   const isDesktop = useBreakpointValue({ xl: true })
 
-  const ownerLastActive = useRef()
-  const [isRoomOwnerActive, setIsRoomOwnerActive] = useState(true)
+  const roomLogs = useRoomLogs(room)
 
-  const visitorID = window.localStorage.getItem('visitorID')
-  const roomOwnerVisitorID = room.owner
+  const roomOwner = room.owner
 
   useEffect(() => {
-    if (roomOwnerVisitorID === visitorID) {
-      firebase.ref('rooms').child(room.name).child('logs').push(`👑 ${room.users[roomOwnerVisitorID].nickname} is the room owner`)
-    }
-    const isActive = setInterval(() => {
-      if (roomOwnerVisitorID === visitorID) {
-        const currentTime = new Date().getTime()
-        firebase.ref('rooms').child(room.name).update({ ownerLastActive: currentTime })
-        ownerLastActive.current = currentTime
-      } else {
-        firebase.ref('rooms').child(room.name).child('ownerLastActive').on('value', (snapshot) => {
-          ownerLastActive.current = snapshot.val()
-        })
+    // log users who join or leave
+    const roomUsersRef = database().ref(`rooms/${room.name}/users`)
+    roomUsersRef.on('child_changed', function (snapshot) {
+      const changedUser = snapshot.val()
+      if (!changedUser.lastOnline) {
+        roomLogs.push(`${room.owner !== roomOwner ? '⚪ ' : '👑 '} ${changedUser.nickname} has joined the room`)
+      } else if (changedUser.lastOnline) {
+        roomLogs.push(`⚪  ${changedUser.nickname} has left the room`)
       }
-    }, 1000)
-    return () => {
-      isActive && clearInterval(isActive)
-    }
-  }, [roomOwnerVisitorID])
+    })
 
-  useEffect(() => {
-    const isActive = setInterval(() => {
-      const currentTime = new Date().getTime()
-      firebase.ref('rooms').child(room.name).child('users').child(visitorID).update({ lastActive: currentTime })
-      setIsRoomOwnerActive(parseInt((currentTime - ownerLastActive.current) / 1000) < 5)
-    }, 1000)
-    return () => {
-      isActive && clearInterval(isActive)
-    }
+    // detect owner offline
+    const roomOwnerLastOnlineRef = database().ref(`rooms/${room.name}/lastOnline`)
+    roomOwnerLastOnlineRef.on('value', (snap) => {
+      const isOffline = snap.val()
+      if (isOffline && room.state !== 'SEARCHING_ROOM_OWNER') {
+        database().ref(`rooms/${room.name}/state`).set('SEARCHING_ROOM_OWNER')
+        roomLogs.push(`👑  ${room.users[roomOwner].nickname} has left the room`)
+      }
+      if (room.state === 'SEARCHING_ROOM_OWNER') {
+        roomOwnerLastOnlineRef.off()
+      }
+    })
   }, [])
 
-  useEffect(() => {
-    if (!isRoomOwnerActive) {
-      firebase.ref('rooms').child(room.name).child('state').update({ waiting: false })
-    }
-  }, [isRoomOwnerActive])
+  const isRoomOwnerActive = !room.lastOnline
 
   const canStartGame = isRoomOwnerActive && haveEnoughUsers(Object.values(room.users))
 
